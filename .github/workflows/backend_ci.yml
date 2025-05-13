@@ -31,6 +31,8 @@ jobs:
           npm run lint
 
       - name: Run tests
-        run: npm run tests
+        run: |
+          cd server
+          npm run tests
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
