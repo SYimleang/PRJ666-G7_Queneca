@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A simple Node.js server with TypeScript",
   "scripts": {
-    "dev": "ts-node src/server.ts",
+    "dev": "ts-node server.ts",
     "start": "node dist/server.js",
     "build": "tsc",
     "lint": "eslint \"**/*.{js,ts,jsx,tsx}\"",

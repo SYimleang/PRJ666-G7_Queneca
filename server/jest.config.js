@@ -5,6 +5,6 @@ export default {
   setupFiles: ['<rootDir>/jest.setup.ts'],
   testMatch: ['**/tests/**/*.test.ts'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',  // For `@/lib/auth` path
+    '^@/(.*)$': '<rootDir>/$1',  // For `@/lib/auth` path
   },
 };
