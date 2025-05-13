@@ -1,4 +1,4 @@
-import { hashPassword, validatePassword, generateToken, verifyToken } from '../../src/lib/auth';
+import { hashPassword, validatePassword, generateToken, verifyToken } from '../../lib/auth';
 
 describe("Auth Module", () => {
     it('hashes and verifies a password correctly', async () => {
