@@ -1,44 +1,78 @@
-import express, { Request, Response } from 'express';
-import { hashPassword, validatePassword, generateToken } from '../lib/auth';
+import express, { Request, Response, RequestHandler } from "express";
+import { hashPassword, validatePassword, generateToken } from "../lib/auth";
+import User, { IUser } from "../models/User";
 
 const router = express.Router();
 
-// Sample in-memory database (replace with MongoDB logic later)
-const users: { email: string; password: string; id: string }[] = [];
-
 // POST /api/auth/register
-router.post('/register', async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+router.post("/register", (async (req: Request, res: Response) => {
+  try {
+    const { email, password, name } = req.body;
 
-  const userExists = users.find((u) => u.email === email);
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-  if (userExists) {
-    res.status(400).json({ message: 'User already exists' });
-    return;
+    // Hash the password
+    const hashedPassword = await hashPassword(password);
+
+    // Create new user
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      name,
+    });
+
+    // Generate JWT token
+    const token = generateToken({
+      id: newUser._id.toString(),
+      email: newUser.email,
+    });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        name: newUser.name,
+      },
+    });
+  } catch (error) {
+    console.error("Register error:", error);
+    res.status(500).json({ message: "Server error during registration" });
   }
-
-  const hashedPassword = await hashPassword(password);
-  const newUser = { id: Date.now().toString(), email, password: hashedPassword };
-  users.push(newUser);
-
-  const token = generateToken({ id: newUser.id, email: newUser.email });
-
-  res.status(201).json({ message: 'User registered', token });
-});
+}) as RequestHandler);
 
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = users.find((u) => u.email === email);
+router.post("/login", (async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
 
-  if (!user || !(await validatePassword(password, user.password))) {
-    res.status(401).json({ message: 'Invalid email or password' });
-    return;
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user || !(await validatePassword(password, user.password))) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Generate JWT token
+    const token = generateToken({ id: user._id.toString(), email: user.email });
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error during login" });
   }
-
-  const token = generateToken({ id: user.id, email: user.email });
-
-  res.status(200).json({ message: 'Login successful', token });
-});
+}) as RequestHandler);
 
 export default router;
