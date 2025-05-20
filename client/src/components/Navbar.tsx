@@ -10,13 +10,29 @@ import { useUser } from '../context/UserContext';
 export default function Navbar() {
   const { user, setUser } = useUser();
 
+  // Determine dashboard link based on role
+  const getDashboardLink = () => {
+    console.log(user?.role);
+    if (!user) return '/';
+    switch (user.role) {
+      case 'admin':
+        return '/admin';
+      case 'staff':
+        return '/staff';
+      case 'customer':
+        return '/customer';
+      default:
+        return '/';
+    }
+  };
+
   return (
     <header className="w-full bg-white shadow px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Left Section */}
         <div className="flex items-center gap-6">
           {/* Logo */}
-          <Link href="/">
+          <Link href={getDashboardLink()}>
             <Image src="/logo.png" alt="Logo" width={200} height={45} />
           </Link>
 
