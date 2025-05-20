@@ -1,13 +1,27 @@
 import '../styles/globals.css';
+import { Inter } from 'next/font/google';
+import Navbar from '@/components/Navbar';
+import { UserProvider } from '../context/UserContext';
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'Queneca',
+  description: 'Your app description',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>
+        <UserProvider>
+          <Navbar />
+          <main className="pt-4 px-2">{children}</main>
+        </UserProvider>
+      </body>
     </html>
   );
 }
