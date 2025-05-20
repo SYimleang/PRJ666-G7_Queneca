@@ -25,12 +25,21 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
-type FormValues = {
-  email: string;
-  password: string;
-  role?: string;
-};
+const baseSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+
+const signupSchema = baseSchema.extend({
+  role: z.enum(['admin', 'staff', 'customer']),
+});
+
+type LoginFormValues = z.infer<typeof baseSchema>;
+type SignupFormValues = z.infer<typeof signupSchema>;
+type FormValues = LoginFormValues | SignupFormValues;
 
 export default function AuthForm() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 5000;
@@ -38,6 +47,7 @@ export default function AuthForm() {
   const searchParams = useSearchParams();
   const { setUser } = useUser();
   const router = useRouter();
+  const formSchema = isSignup ? signupSchema : baseSchema;
 
   useEffect(() => {
     const mode = searchParams.get('mode');
@@ -45,11 +55,12 @@ export default function AuthForm() {
   }, [searchParams]);
 
   const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
-      role: '',
-    },
+      ...(isSignup ? { role: '' } : {}),
+    } as FormValues,
   });
 
   const onSubmit = async (data: FormValues) => {
@@ -92,6 +103,9 @@ export default function AuthForm() {
         } else {
           router.push('/customer');
         }
+      } else {
+        alert('Successfully created account');
+        router.push('/auth?mode=login');
       }
       console.log('Success:', result);
     } catch (error: unknown) {
