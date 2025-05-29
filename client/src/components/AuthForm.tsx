@@ -35,6 +35,10 @@ const baseSchema = z.object({
 
 const signupSchema = baseSchema.extend({
   role: z.enum(['admin', 'staff', 'customer']),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
 });
 
 type LoginFormValues = z.infer<typeof baseSchema>;
@@ -59,19 +63,33 @@ export default function AuthForm() {
     defaultValues: {
       email: '',
       password: '',
-      ...(isSignup ? { role: '' } : {}),
+      confirmPassword: '',
+      ...(isSignup ? { role: '', confirmPassword: '' } : {}),
     } as FormValues,
   });
 
   const onSubmit = async (data: FormValues) => {
     const endpoint = isSignup ? 'register' : 'login';
+
+    let dataToSend = data;
+
+    // If it's a signup, we need to remove confirmPassword from the data
+    if (isSignup) {
+      const signupData = data as SignupFormValues;
+
+      // Remove confirmPassword from the data to send to the API
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { confirmPassword, ...rest } = signupData;
+      dataToSend = rest;
+    }
+
     try {
       const response = await fetch(`${apiUrl}/api/auth/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(dataToSend),
       });
 
       const result = await response.json();
@@ -169,6 +187,28 @@ export default function AuthForm() {
               </FormItem>
             )}
           />
+
+          {/* Confirm Password (only for Sign Up) */}
+          {isSignup && (
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-red-500">Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="bg-amber-50"
+                      type="password"
+                      placeholder="Confirm your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {/* Role dropdown (only for Sign Up) */}
           {isSignup && (
