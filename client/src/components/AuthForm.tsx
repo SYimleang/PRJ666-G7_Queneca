@@ -18,34 +18,52 @@ import {
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
+// import {
+//   Select,
+//   SelectTrigger,
+//   SelectValue,
+//   SelectContent,
+//   SelectItem,
+// } from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 const baseSchema = z.object({
   email: z.string().email(),
   // Password requirements:
-  password: z.string()
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(
+      /[^A-Za-z0-9]/,
+      'Password must contain at least one special character'
+    ),
 });
 
-const signupSchema = baseSchema.extend({
-  role: z.enum(['admin', 'staff', 'customer']),
-  confirmPassword: z.string().min(1, 'Please confirm your password'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-});
+const signupSchema = baseSchema
+  .extend({
+    username: z
+      .string()
+      .min(3, { message: 'Username must be at least 3 characters' })
+      .max(30, { message: 'Username must be 30 characters or less' })
+      .regex(/^[a-zA-Z0-9_]+$/, {
+        message: 'Username can only contain letters, numbers, and underscores',
+      }),
+    role: z.enum(['admin', 'staff', 'customer']),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    phone: z
+      .string()
+      .regex(/^(\+?\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/, {
+        message: 'Invalid phone number format',
+      }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 type LoginFormValues = z.infer<typeof baseSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -67,6 +85,7 @@ export default function AuthForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -106,18 +125,21 @@ export default function AuthForm() {
 
       if (!isSignup) {
         type DecodedToken = {
+          username: string;
           email: string;
           role: 'admin' | 'staff' | 'customer';
+          phone: string;
         };
 
         const decoded = jwtDecode<DecodedToken>(result.token);
         console.log('Decoded Token:', decoded);
         // Update context
         setUser({
+          username: decoded.username,
           email: decoded.email,
           role: decoded.role,
           token: result.token,
-          username: decoded.email.split('@')[0],
+          phone: decoded.phone,
         });
 
         // Redirect
@@ -155,6 +177,27 @@ export default function AuthForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Username */}
+          {isSignup && (
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-red-500">Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="bg-amber-50"
+                      type="text"
+                      placeholder="Type your username"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           {/* Email */}
           <FormField
             control={form.control}
@@ -174,6 +217,62 @@ export default function AuthForm() {
               </FormItem>
             )}
           />
+          {/* Phone */}
+          {isSignup && (
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-red-500">Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="bg-amber-50"
+                      type="text"
+                      placeholder="333-333-3333"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+          {/* Role default hidden customer */}
+          {isSignup && (
+            <input type="hidden" value="customer" {...form.register('role')} />
+          )}
+          {/* Role dropdown (only for Sign Up) */}
+          {/* {isSignup && (
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-red-500">Role</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl className="bg-amber-50">
+                      <SelectTrigger>
+                        <SelectValue
+                          className="bg-amber-50"
+                          placeholder="Select a role"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-amber-50">
+                      <SelectItem value="customer">Customer</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="staff">Staff</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )} */}
 
           {/* Password */}
           <FormField
@@ -202,7 +301,9 @@ export default function AuthForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-red-500">Confirm Password</FormLabel>
+                  <FormLabel className="text-red-500">
+                    Confirm Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       className="bg-amber-50"
@@ -211,38 +312,6 @@ export default function AuthForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-
-          {/* Role dropdown (only for Sign Up) */}
-          {isSignup && (
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-red-500">Role</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl className="bg-amber-50">
-                      <SelectTrigger>
-                        <SelectValue
-                          className="bg-amber-50"
-                          placeholder="Select a role"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-amber-50">
-                      <SelectItem value="customer">Customer</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="staff">Staff</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
