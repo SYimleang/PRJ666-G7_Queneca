@@ -1,6 +1,6 @@
 import express, { Request, Response, RequestHandler } from "express";
 import { hashPassword, validatePassword, generateToken } from "../lib/auth";
-import User, { IUser } from "../models/User";
+import User from "../models/User";
 
 const router = express.Router();
 
@@ -37,7 +37,7 @@ router.post("/register", (async (req: Request, res: Response) => {
       user: {
         id: newUser._id,
         email: newUser.email,
-        name: newUser.name,
+        
       },
     });
   } catch (error) {

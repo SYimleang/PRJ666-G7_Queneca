@@ -28,7 +28,7 @@ router.put("/me", authenticate, (async (req: AuthRequest, res: Response) => {
     const { name, email } = req.body;
 
     // Find user by ID
-    let user = await User.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
