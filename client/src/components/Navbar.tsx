@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '../context/UserContext';
 
 export default function Navbar() {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   // Determine dashboard link based on role
   const getDashboardLink = () => {
@@ -63,16 +63,11 @@ export default function Navbar() {
         {/* Right Section */}
         <div className="flex items-center gap-3">
           {user ? (
-            <div>
-              <Link href="/edit-user">
-                <Button className="bg-red-500 text-white hover:bg-red-400">
-                  {user.email}
-                </Button>
-              </Link>
-              <Button onClick={() => setUser(null)} className="text-white">
-                Logout(temp)
+            <Link href="/edit-user">
+              <Button className="bg-red-500 text-white hover:bg-red-400">
+                {user.username}
               </Button>
-            </div>
+            </Link>
           ) : (
             <>
               <Link href="/auth?mode=login">
