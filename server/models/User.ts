@@ -1,10 +1,12 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
   email: string;
   password: string;
-  name: string;
+  username: string;
+  phone: string;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,7 +24,17 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
     },
-    name: {
+    username: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    role: {
       type: String,
       required: true,
       trim: true,
@@ -33,4 +45,4 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-export default mongoose.model<IUser>("User", userSchema);
+export default mongoose.model<IUser>('User', userSchema);
