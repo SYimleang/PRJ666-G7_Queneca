@@ -7,16 +7,22 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 export default function EditUserPage() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
   const { user, setUser, loading } = useUser();
   const router = useRouter();
 
   const [email, setEmail] = useState(user?.email || '');
+  const [username, setUsername] = useState(user?.username || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [curPassword, setCurPassword] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
     } else if (user) {
       setEmail(user.email);
+      setUsername(user.username);
+      setPhone(user.phone);
     }
   }, [loading, user, router]);
 
@@ -26,10 +32,30 @@ export default function EditUserPage() {
 
   if (!user) return null;
 
-  const handleSave = () => {
-    // Just update context for now; can later call an API to save on the backend
-    setUser({ ...user!, email });
-    alert('User info updated!');
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/users/me`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`, // send token in Authorization header
+        },
+        body: JSON.stringify({
+          currentPassword: curPassword,
+          email,
+          username,
+          phone,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Update failed');
+
+      setUser({ ...user!, username, email, phone });
+      alert('Profile updated successfully!');
+    } catch (err) {
+      alert(`Error: ${err}`);
+    }
   };
 
   const handleLogout = () => {
@@ -44,6 +70,15 @@ export default function EditUserPage() {
       </h1>
 
       <label className="block mb-2 text-sm font-medium text-red-500">
+        Username
+      </label>
+      <Input
+        type="text"
+        value={username}
+        className="mb-4 bg-amber-50"
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <label className="block mb-2 text-sm font-medium text-red-500">
         Email
       </label>
       <Input
@@ -52,7 +87,24 @@ export default function EditUserPage() {
         className="mb-4 bg-amber-50"
         onChange={(e) => setEmail(e.target.value)}
       />
-
+      <label className="block mb-2 text-sm font-medium text-red-500">
+        Phone
+      </label>
+      <Input
+        type="text"
+        value={phone}
+        className="mb-4 bg-amber-50"
+        onChange={(e) => setPhone(e.target.value)}
+      />
+      <label className="block mb-2 text-sm font-medium text-red-500">
+        Current Password
+      </label>
+      <Input
+        type="password"
+        value={curPassword}
+        className="mb-4 bg-amber-50"
+        onChange={(e) => setCurPassword(e.target.value)}
+      />
       <div className="flex justify-between gap-2">
         <Button
           onClick={handleSave}
