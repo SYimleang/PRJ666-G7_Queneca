@@ -7,6 +7,8 @@ type User = {
   email: string;
   role: string;
   token: string;
+  username: string;
+  phone: string;
 };
 
 type UserContextType = {
