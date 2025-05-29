@@ -30,7 +30,13 @@ import { z } from 'zod';
 
 const baseSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1),
+  // Password requirements:
+  password: z.string()
+  .min(8, 'Password must be at least 8 characters')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number')
+  .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
 });
 
 const signupSchema = baseSchema.extend({
@@ -46,7 +52,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 type FormValues = LoginFormValues | SignupFormValues;
 
 export default function AuthForm() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 5000;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
   const [isSignup, setIsSignup] = useState(false);
   const searchParams = useSearchParams();
   const { setUser } = useUser();
@@ -111,6 +117,7 @@ export default function AuthForm() {
           email: decoded.email,
           role: decoded.role,
           token: result.token,
+          username: decoded.email.split('@')[0],
         });
 
         // Redirect
