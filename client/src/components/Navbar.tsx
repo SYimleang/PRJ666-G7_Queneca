@@ -84,7 +84,7 @@ export default function Navbar() {
                 onClick={() => setOpen(!open)}
                 className="bg-red-500 text-white px-4 py-2 rounded"
               >
-                {user.email}
+                {user.username}
               </button>
 
               {open && (
