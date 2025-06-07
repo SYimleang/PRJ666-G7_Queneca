@@ -16,6 +16,20 @@ export default function EditUserPage() {
   const [phone, setPhone] = useState(user?.phone || '');
   const [curPassword, setCurPassword] = useState('');
 
+  const getDashboardLink = () => {
+    console.log(user?.role);
+    if (!user) return '/';
+    switch (user.role) {
+      case 'admin':
+        return '/admin';
+      case 'staff':
+        return '/staff';
+      case 'customer':
+        return '/customer';
+      default:
+        return '/';
+    }
+  };
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
@@ -53,6 +67,7 @@ export default function EditUserPage() {
 
       setUser({ ...user!, username, email, phone });
       alert('Profile updated successfully!');
+      router.push(`${getDashboardLink()}`);
     } catch (err) {
       alert(`Error: ${err}`);
     }
