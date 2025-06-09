@@ -5,6 +5,9 @@ dotenv.config(); // Load environment variables from .env
 
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
+import restaurantRoutes from "./routes/restaurants";
+import menuRoutes from "./routes/menus";
+import adminRoutes from "./routes/admin";
 import { connectDB } from "./config/database";
 
 const app = express();
@@ -17,6 +20,9 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/menus", menuRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Default Route
 app.get("/", (_req, res) => {
