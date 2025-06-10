@@ -2,6 +2,8 @@ import '../styles/globals.css';
 import { Inter } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import { UserProvider } from '../context/UserContext';
+import { RestaurantProvider } from '../context/RestaurantContext';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
@@ -18,8 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <UserProvider>
-          <Navbar />
-          <main className="pt-4 px-2">{children}</main>
+          <RestaurantProvider>
+            <Navbar />
+            <main className="pt-4 px-2">{children}</main>
+          </RestaurantProvider>
         </UserProvider>
       </body>
     </html>
