@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IRestaurant extends Document {
   name: string;
@@ -15,8 +15,13 @@ export interface IRestaurant extends Document {
   };
   rating?: number;
   ownerId: mongoose.Types.ObjectId; // User with role=admin
+  logoUrl: string;
+  qrCode: string;
   createdAt: Date;
   updatedAt: Date;
+  // waitlist ID
+  // staff list ID
+  // menu ID
 }
 
 const restaurantSchema = new Schema<IRestaurant>(
@@ -26,7 +31,7 @@ const restaurantSchema = new Schema<IRestaurant>(
     location: {
       address: { type: String, required: true },
       city: { type: String, required: true },
-      state: { type: String, required: true },
+      region: { type: String, required: true }, // province/state
       zip: { type: String, required: true },
     },
     hours: {
@@ -34,9 +39,11 @@ const restaurantSchema = new Schema<IRestaurant>(
       close: { type: String, required: true },
     },
     rating: { type: Number, default: 0 },
-    ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    logoUrl: { type: String, required: false },
+    qrCode: { type: String, required: false },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IRestaurant>("Restaurant", restaurantSchema);
+export default mongoose.model<IRestaurant>('Restaurant', restaurantSchema);
