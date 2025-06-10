@@ -1,19 +1,12 @@
 // context/UserContext.tsx
-"use client";
+'use client';
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-
-type User = {
-  email: string;
-  role: string;
-  token: string;
-  name: string;
-  phone: string;
-};
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { IUser } from '../types/user';
 
 type UserContextType = {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: IUser | null;
+  setUser: (user: IUser | null) => void;
   loading: boolean;
 };
 
@@ -24,29 +17,29 @@ const UserContext = createContext<UserContextType>({
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUserState] = useState<User | null>(null);
+  const [user, setUserState] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // On mount: load user from localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         setUserState(JSON.parse(storedUser));
       } catch (err) {
-        console.error("Failed to parse stored user", err);
+        console.error('Failed to parse stored user', err);
       }
     }
     setLoading(false);
   }, []);
 
   // When user changes: save to localStorage
-  const setUser = (user: User | null) => {
+  const setUser = (user: IUser | null) => {
     setUserState(user);
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user));
     } else {
-      localStorage.removeItem("user");
+      localStorage.removeItem('user');
     }
   };
 
@@ -59,6 +52,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useUser = () => {
   const context = useContext(UserContext);
-  if (!context) throw new Error("useUser must be used within a UserProvider");
+  if (!context) throw new Error('useUser must be used within a UserProvider');
   return context;
 };
