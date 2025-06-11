@@ -60,7 +60,7 @@ export default function Navbar() {
               About Us
             </Link>
             <Link
-              href="/support"
+              href="/faqs"
               className="text-red-600 hover:text-red-500 transition-colors"
             >
               Support
