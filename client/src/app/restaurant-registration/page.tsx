@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { useUser } from '../../context/UserContext';
-import { useRestaurant } from '../../context/RestaurantContext';
-import dotenv from 'dotenv';
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useUser } from "../../context/UserContext";
+import { useRestaurant } from "../../context/RestaurantContext";
+import dotenv from "dotenv";
 dotenv.config();
 import {
   Form,
@@ -13,13 +13,13 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/components/ui/form';
-import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/form";
+import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 const formSchema = z.object({
   name: z.string(),
@@ -36,7 +36,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function RestaurantForm() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
   const { user, setUser } = useUser();
   const { setRestaurant } = useRestaurant();
@@ -45,15 +45,15 @@ export default function RestaurantForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      phone: '',
-      address: '',
-      city: '',
-      region: '',
-      zip: '',
-      openHour: '',
-      closeHour: '',
-      logo: '',
+      name: "",
+      phone: "",
+      address: "",
+      city: "",
+      region: "",
+      zip: "",
+      openHour: "",
+      closeHour: "",
+      logo: "",
     } as FormValues,
   });
 
@@ -75,13 +75,13 @@ export default function RestaurantForm() {
     };
     try {
       if (!user) {
-        alert('user not found');
+        alert("user not found");
         return;
       }
       const response = await fetch(`${apiUrl}/api/restaurants`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify(dataToSend),
@@ -90,31 +90,31 @@ export default function RestaurantForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Something went wrong');
+        throw new Error(result.message || "Something went wrong");
       }
 
       // update user context
       setUser({
         ...user,
-        role: 'admin', // backend is updating user role and would have already throwed error if failed
+        role: "admin", // backend is updating user role and would have already throwed error if failed
         restaurantId: result.restaurant._id,
       });
-      console.log('restaurant-registration fetch result ', result);
+      console.log("restaurant-registration fetch result ", result);
       // update restaurant context
       setRestaurant(result.restaurant);
 
       // re-route
-      router.push('/admin');
-      alert('Successfully registered restaurant');
+      router.push("/admin");
+      alert("Successfully registered restaurant");
 
-      console.log('Success:', result);
+      console.log("Success:", result);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error('Error:', error.message);
+        console.error("Error:", error.message);
         alert(error.message);
       } else {
-        console.error('Unexpected error:', error);
-        alert('An unexpected error occurred');
+        console.error("Unexpected error:", error);
+        alert("An unexpected error occurred");
       }
     }
   };

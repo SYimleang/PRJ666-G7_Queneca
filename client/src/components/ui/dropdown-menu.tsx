@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { useUser } from '../../context/UserContext';
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { useUser } from "../../context/UserContext";
 
 export default function Navbar() {
-    const { user, setUser } = useUser();
+  const { user, setUser } = useUser();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -16,8 +16,8 @@ export default function Navbar() {
         setOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   if (!user) {

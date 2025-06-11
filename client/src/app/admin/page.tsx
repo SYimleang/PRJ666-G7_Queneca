@@ -1,14 +1,14 @@
 // app/admin/page.tsx
 
-'use client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+"use client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 // import { Input } from '@/components/ui/input';
-import Image from 'next/image';
-import AdminNav from '@/components/AdminNav';
-import { useRestaurant } from '@/context/RestaurantContext';
-import { useUser } from '@/context/UserContext';
+import Image from "next/image";
+import AdminNav from "@/components/AdminNav";
+import { useRestaurant } from "@/context/RestaurantContext";
+import { useUser } from "@/context/UserContext";
 
 export default function AdminDashboardPage() {
   const { restaurant } = useRestaurant();
@@ -17,7 +17,7 @@ export default function AdminDashboardPage() {
   const printQRCode = () => {
     if (!restaurant?.qrCode) return;
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     printWindow.document.write(`
@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
           {restaurant ? (
             <div>
               <Image
-                src={restaurant.logoUrl || '/restaurant_logo.png'}
+                src={restaurant.logoUrl || "/restaurant_logo.png"}
                 alt="Restaurant Logo"
                 width={100}
                 height={100}
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
               <h2 className="text-xl font-semibold mt-4">{restaurant.name}</h2>
               <p>{restaurant.phone}</p>
               <p>
-                {restaurant.location.address}, {restaurant.location.city},{' '}
+                {restaurant.location.address}, {restaurant.location.city},{" "}
                 {restaurant.location.region} {restaurant.location.zip}
               </p>
               <p>

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+import * as React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,8 +12,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu';
-import { useRestaurant } from '@/context/RestaurantContext';
+} from "@/components/ui/navigation-menu";
+import { useRestaurant } from "@/context/RestaurantContext";
 
 export default function AdminNav() {
   const { restaurant } = useRestaurant();
@@ -21,7 +21,7 @@ export default function AdminNav() {
   const printQRCode = () => {
     if (!restaurant?.qrCode) return;
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     printWindow.document.write(`
@@ -160,7 +160,7 @@ function ListItem({
   children,
   href,
   ...props
-}: React.ComponentPropsWithoutRef<'li'> & { href: string }) {
+}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

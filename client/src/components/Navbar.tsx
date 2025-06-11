@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useUser } from '../context/UserContext';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useUser } from "../context/UserContext";
 
 export default function Navbar() {
   const { user, setUser } = useUser();
@@ -22,22 +22,22 @@ export default function Navbar() {
         setOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Determine dashboard link based on role
   const getDashboardLink = () => {
-    if (!user) return '/';
+    if (!user) return "/";
     switch (user.role) {
-      case 'admin':
-        return '/admin';
-      case 'staff':
-        return '/staff';
-      case 'customer':
-        return '/customer';
+      case "admin":
+        return "/admin";
+      case "staff":
+        return "/staff";
+      case "customer":
+        return "/customer";
       default:
-        return '/';
+        return "/";
     }
   };
 
