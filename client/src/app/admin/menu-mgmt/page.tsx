@@ -21,6 +21,8 @@ import {
 import { IMenuItem, IMenu } from "@/types/menu";
 import { useRestaurant } from "@/context/RestaurantContext";
 import { useUser } from "@/context/UserContext";
+import AdminNav from "@/components/AdminNav";
+import { Separator } from "@/components/ui/separator";
 
 const CATEGORIES = ["Appetizer", "Main Course", "Dessert", "Beverage", "Side"];
 
@@ -114,7 +116,7 @@ export default function MenuManagement() {
       if (editingItem) {
         // Update existing item
         updatedMenuItems = menu?.menuItems.map((item) =>
-          item === editingItem ? { ...(formData as IMenuItem) } : item
+          item === editingItem ? { ...(formData as IMenuItem) } : item,
         ) || [formData as IMenuItem];
       } else {
         // Add new item
@@ -179,7 +181,7 @@ export default function MenuManagement() {
       setError(null);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to delete menu item"
+        err instanceof Error ? err.message : "Failed to delete menu item",
       );
     }
   };
@@ -206,64 +208,68 @@ export default function MenuManagement() {
 
   if (loading) {
     return (
-      <div className='container mx-auto p-6'>
-        <div className='flex items-center justify-center'>
-          <div className='text-lg'>Loading menu...</div>
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center">
+          <div className="text-lg">Loading menu...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='container mx-auto p-6'>
-      <div className='flex items-center justify-between mb-6'>
+    <div className="container mx-auto p-6">
+      <AdminNav></AdminNav>
+      <Separator className="mt-5 mb-5" />
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className='text-3xl font-bold'>Menu Management</h1>
-          <p className='text-gray-600'>Manage your restaurant's menu items</p>
+          <h1 className="text-3xl font-bold">Menu Management</h1>
+          <p className="text-gray-600">
+            Manage your restaurant&apos;s menu items
+          </p>
         </div>
         <Button
           onClick={() => setShowAddForm(true)}
-          className='bg-green-600 hover:bg-green-700'
+          className="bg-green-600 hover:bg-green-700"
         >
           Add New Item
         </Button>
       </div>
 
       {error && (
-        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
 
       {(showAddForm || editingItem) && (
-        <Card className='mb-6'>
+        <Card className="mb-6">
           <CardHeader>
             <CardTitle>
               {editingItem ? "Edit Menu Item" : "Add New Menu Item"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className='space-y-4'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor='name'>Name *</Label>
+                  <Label htmlFor="name">Name *</Label>
                   <Input
-                    id='name'
+                    id="name"
                     value={formData.name || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder='Item name'
+                    placeholder="Item name"
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor='price'>Price *</Label>
+                  <Label htmlFor="price">Price *</Label>
                   <Input
-                    id='price'
-                    type='number'
-                    step='0.01'
-                    min='0'
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
                     value={formData.price || ""}
                     onChange={(e) =>
                       setFormData({
@@ -271,40 +277,40 @@ export default function MenuManagement() {
                         price: parseFloat(e.target.value) || 0,
                       })
                     }
-                    placeholder='0.00'
+                    placeholder="0.00"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor='description'>Description</Label>
+                <Label htmlFor="description">Description</Label>
                 <Input
-                  id='description'
+                  id="description"
                   value={formData.description || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  placeholder='Brief description of the item'
+                  placeholder="Brief description of the item"
                 />
               </div>
 
               <div>
-                <Label htmlFor='ingredients'>Ingredients *</Label>
+                <Label htmlFor="ingredients">Ingredients *</Label>
                 <Input
-                  id='ingredients'
+                  id="ingredients"
                   value={formData.ingredients || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, ingredients: e.target.value })
                   }
-                  placeholder='List of ingredients'
+                  placeholder="List of ingredients"
                   required
                 />
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor='category'>Category *</Label>
+                  <Label htmlFor="category">Category *</Label>
                   <Select
                     value={formData.category || ""}
                     onValueChange={(value) =>
@@ -312,7 +318,7 @@ export default function MenuManagement() {
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Select category' />
+                      <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
                       {CATEGORIES.map((category) => (
@@ -324,26 +330,26 @@ export default function MenuManagement() {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor='imageUrl'>Image URL</Label>
+                  <Label htmlFor="imageUrl">Image URL</Label>
                   <Input
-                    id='imageUrl'
+                    id="imageUrl"
                     value={formData.imageUrl || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, imageUrl: e.target.value })
                     }
-                    placeholder='https://example.com/image.jpg'
+                    placeholder="https://example.com/image.jpg"
                   />
                 </div>
               </div>
 
               <div>
                 <Label>Dietary Information</Label>
-                <div className='flex flex-wrap gap-4 mt-2'>
+                <div className="flex flex-wrap gap-4 mt-2">
                   {Object.entries(formData.dietaryInfo || {}).map(
                     ([key, value]) => (
-                      <label key={key} className='flex items-center space-x-2'>
+                      <label key={key} className="flex items-center space-x-2">
                         <input
-                          type='checkbox'
+                          type="checkbox"
                           checked={value}
                           onChange={(e) =>
                             setFormData({
@@ -355,32 +361,32 @@ export default function MenuManagement() {
                             })
                           }
                         />
-                        <span className='capitalize'>
+                        <span className="capitalize">
                           {key.replace("_", " ")}
                         </span>
                       </label>
-                    )
+                    ),
                   )}
                 </div>
               </div>
 
-              <div className='flex items-center space-x-2'>
+              <div className="flex items-center space-x-2">
                 <input
-                  type='checkbox'
-                  id='available'
+                  type="checkbox"
+                  id="available"
                   checked={formData.available}
                   onChange={(e) =>
                     setFormData({ ...formData, available: e.target.checked })
                   }
                 />
-                <Label htmlFor='available'>Available</Label>
+                <Label htmlFor="available">Available</Label>
               </div>
 
-              <div className='flex space-x-2'>
-                <Button type='submit' className='bg-blue-600 hover:bg-blue-700'>
+              <div className="flex space-x-2">
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                   {editingItem ? "Update Item" : "Add Item"}
                 </Button>
-                <Button type='button' variant='outline' onClick={resetForm}>
+                <Button type="button" variant="outline" onClick={resetForm}>
                   Cancel
                 </Button>
               </div>
@@ -389,15 +395,15 @@ export default function MenuManagement() {
         </Card>
       )}
 
-      <div className='grid gap-4'>
+      <div className="grid gap-4">
         {menu?.menuItems && menu.menuItems.length > 0 ? (
           menu.menuItems.map((item, index) => (
             <Card key={index}>
-              <CardContent className='p-4'>
-                <div className='flex items-start justify-between'>
-                  <div className='flex-1'>
-                    <div className='flex items-center gap-2 mb-2'>
-                      <h3 className='text-lg font-semibold'>{item.name}</h3>
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-semibold">{item.name}</h3>
                       <span
                         className={`px-2 py-1 rounded text-xs ${
                           item.available
@@ -407,50 +413,51 @@ export default function MenuManagement() {
                       >
                         {item.available ? "Available" : "Unavailable"}
                       </span>
-                      <span className='px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs'>
+                      <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
                         {item.category}
                       </span>
                     </div>
-                    <p className='text-gray-600 mb-2'>{item.description}</p>
-                    <p className='text-sm text-gray-500 mb-2'>
+                    <p className="text-gray-600 mb-2">{item.description}</p>
+                    <p className="text-sm text-gray-500 mb-2">
                       <strong>Ingredients:</strong> {item.ingredients}
                     </p>
-                    <div className='flex items-center gap-4'>
-                      <span className='text-lg font-bold text-green-600'>
+                    <div className="flex items-center gap-4">
+                      <span className="text-lg font-bold text-green-600">
                         ${item.price.toFixed(2)}
                       </span>
                       {Object.entries(item.dietaryInfo).some(
-                        ([_, value]) => value
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        ([_, value]) => value,
                       ) && (
-                        <div className='flex gap-1'>
+                        <div className="flex gap-1">
                           {Object.entries(item.dietaryInfo).map(
                             ([key, value]) =>
                               value ? (
                                 <span
                                   key={key}
-                                  className='px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs'
+                                  className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
                                 >
                                   {key.replace("_", " ")}
                                 </span>
-                              ) : null
+                              ) : null,
                           )}
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className='flex space-x-2 ml-4'>
+                  <div className="flex space-x-2 ml-4">
                     <Button
                       onClick={() => handleEdit(item)}
-                      variant='outline'
-                      size='sm'
+                      variant="outline"
+                      size="sm"
                     >
                       Edit
                     </Button>
                     <Button
                       onClick={() => handleDelete(item)}
-                      variant='outline'
-                      size='sm'
-                      className='text-red-600 hover:text-red-800'
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-800"
                     >
                       Delete
                     </Button>
@@ -461,11 +468,11 @@ export default function MenuManagement() {
           ))
         ) : (
           <Card>
-            <CardContent className='p-8 text-center'>
-              <p className='text-gray-500 mb-4'>No menu items found</p>
+            <CardContent className="p-8 text-center">
+              <p className="text-gray-500 mb-4">No menu items found</p>
               <Button
                 onClick={() => setShowAddForm(true)}
-                className='bg-green-600 hover:bg-green-700'
+                className="bg-green-600 hover:bg-green-700"
               >
                 Add Your First Menu Item
               </Button>
