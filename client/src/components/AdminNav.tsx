@@ -63,7 +63,9 @@ export default function AdminNav() {
       <NavigationMenuList>
         {/* Home */}
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Home</NavigationMenuTrigger>
+          <NavigationMenuTrigger>
+            <Link href={"/admin"}>Home</Link>
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className='grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
               <li className='row-span-3'>
