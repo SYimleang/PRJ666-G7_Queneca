@@ -139,6 +139,7 @@ export default function AuthForm() {
           email: string;
           role: "admin" | "staff" | "customer";
           phone: string;
+          restaurantId?: string;
         };
 
         const decoded = jwtDecode<DecodedToken>(result.token);
@@ -150,6 +151,7 @@ export default function AuthForm() {
           role: decoded.role,
           token: result.token,
           phone: decoded.phone,
+          restaurantId: decoded.restaurantId,
         });
 
         // Redirect
