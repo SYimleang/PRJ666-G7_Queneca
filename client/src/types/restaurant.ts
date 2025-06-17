@@ -1,4 +1,11 @@
 // types/restaurant.ts
+export interface IWaitlistSettings {
+  autoRemoveMinutes: number;
+  maxCapacity: number;
+  estimatedWaitTimePerCustomer: number;
+  tableReadyNotificationMessage: string;
+}
+
 export interface IRestaurant {
   _id: string;
   name: string;
@@ -17,6 +24,7 @@ export interface IRestaurant {
   ownerId: string;
   logoUrl?: string;
   qrCode?: string;
+  waitlistSettings: IWaitlistSettings;
   createdAt?: string;
   updatedAt?: string;
 }

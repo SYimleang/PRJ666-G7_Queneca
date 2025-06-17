@@ -1,6 +1,7 @@
 import express, { Request, Response, RequestHandler } from "express";
 import { hashPassword, validatePassword, generateToken } from "../lib/auth";
 import User from "../models/User";
+import { authenticate, AuthRequest } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -146,6 +147,32 @@ router.post("/login", (async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error during login" });
+  }
+}) as RequestHandler);
+
+// GET /api/auth/verify - Verify current token (Protected)
+router.get("/verify", authenticate, (async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "No user found in token" });
+    }
+
+    res.status(200).json({
+      message: "Token is valid",
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        role: req.user.role,
+        name: req.user.name,
+        phone: req.user.phone,
+      },
+    });
+  } catch (error) {
+    console.error("Token verification error:", error);
+    res.status(500).json({ message: "Server error during token verification" });
   }
 }) as RequestHandler);
 
