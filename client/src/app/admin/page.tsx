@@ -55,12 +55,13 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <div className="container mx-auto p-6">
       {/* Custom Navbar Slot */}
       <AdminNav></AdminNav>
+      <Separator className="mt-5 mb-5" />
       <div className="flex justify-between items-center">
         {user ? (
-          <h1 className="text-2xl font-bold">
+          <h1 className="mb-5 text-2xl font-bold">
             {user.name}&apos;s Admin Dashboard
           </h1>
         ) : (
@@ -68,8 +69,6 @@ export default function AdminDashboardPage() {
         )}
         <div className="space-x-2"></div>
       </div>
-
-      <Separator />
 
       {/* Restaurant Overview */}
       <Card>
@@ -147,6 +146,6 @@ export default function AdminDashboardPage() {
           </div>
         </CardContent>
       </Card>
-    </main>
+    </div>
   );
 }
