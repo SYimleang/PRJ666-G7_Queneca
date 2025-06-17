@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { IWaitlistSettings } from "@/types/restaurant";
 import { useRestaurant } from "@/context/RestaurantContext";
 import { useUser } from "@/context/UserContext";
+import AdminNav from "@/components/AdminNav";
+import { Separator } from "@/components/ui/separator";
 
 export default function WaitlistSettings() {
   const { restaurant } = useRestaurant();
@@ -54,7 +56,7 @@ export default function WaitlistSettings() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -65,7 +67,7 @@ export default function WaitlistSettings() {
       setSettings(data.waitlistSettings);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to load waitlist settings"
+        err instanceof Error ? err.message : "Failed to load waitlist settings",
       );
     } finally {
       setLoading(false);
@@ -136,13 +138,13 @@ export default function WaitlistSettings() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(settings),
-        }
+        },
       );
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.message || "Failed to update waitlist settings"
+          errorData.message || "Failed to update waitlist settings",
         );
       }
 
@@ -156,7 +158,7 @@ export default function WaitlistSettings() {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to update waitlist settings"
+          : "Failed to update waitlist settings",
       );
     } finally {
       setSaving(false);
@@ -175,31 +177,33 @@ export default function WaitlistSettings() {
 
   if (loading) {
     return (
-      <div className='container mx-auto p-6'>
-        <div className='flex items-center justify-center'>
-          <div className='text-lg'>Loading waitlist settings...</div>
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center">
+          <div className="text-lg">Loading waitlist settings...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='container mx-auto p-6'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Waitlist Settings</h1>
-        <p className='text-gray-600'>
-          Configure how your restaurant's waitlist behaves
+    <div className="container mx-auto p-6">
+      <AdminNav></AdminNav>
+      <Separator className="mt-5 mb-5" />
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Waitlist Settings</h1>
+        <p className="text-gray-600">
+          Configure how your restaurant&apos;s waitlist behaves
         </p>
       </div>
 
       {error && (
-        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
 
       {success && (
-        <div className='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4'>
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
           {success}
         </div>
       )}
@@ -212,17 +216,17 @@ export default function WaitlistSettings() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className='space-y-6'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor='autoRemoveMinutes'>
+                <Label htmlFor="autoRemoveMinutes">
                   Auto-Remove Timeout (minutes) *
                 </Label>
                 <Input
-                  id='autoRemoveMinutes'
-                  type='number'
-                  min='1'
-                  max='1440'
+                  id="autoRemoveMinutes"
+                  type="number"
+                  min="1"
+                  max="1440"
                   value={settings.autoRemoveMinutes}
                   onChange={(e) =>
                     setSettings({
@@ -230,22 +234,22 @@ export default function WaitlistSettings() {
                       autoRemoveMinutes: parseInt(e.target.value) || 0,
                     })
                   }
-                  placeholder='30'
+                  placeholder="30"
                   required
                 />
-                <p className='text-sm text-gray-500 mt-1'>
+                <p className="text-sm text-gray-500 mt-1">
                   Automatically remove customers from waitlist after this many
                   minutes
                 </p>
               </div>
 
               <div>
-                <Label htmlFor='maxCapacity'>Maximum Waitlist Capacity *</Label>
+                <Label htmlFor="maxCapacity">Maximum Waitlist Capacity *</Label>
                 <Input
-                  id='maxCapacity'
-                  type='number'
-                  min='1'
-                  max='1000'
+                  id="maxCapacity"
+                  type="number"
+                  min="1"
+                  max="1000"
                   value={settings.maxCapacity}
                   onChange={(e) =>
                     setSettings({
@@ -253,24 +257,24 @@ export default function WaitlistSettings() {
                       maxCapacity: parseInt(e.target.value) || 0,
                     })
                   }
-                  placeholder='50'
+                  placeholder="50"
                   required
                 />
-                <p className='text-sm text-gray-500 mt-1'>
+                <p className="text-sm text-gray-500 mt-1">
                   Maximum number of customers allowed on the waitlist
                 </p>
               </div>
             </div>
 
             <div>
-              <Label htmlFor='estimatedWaitTimePerCustomer'>
+              <Label htmlFor="estimatedWaitTimePerCustomer">
                 Estimated Wait Time Per Customer (minutes) *
               </Label>
               <Input
-                id='estimatedWaitTimePerCustomer'
-                type='number'
-                min='1'
-                max='240'
+                id="estimatedWaitTimePerCustomer"
+                type="number"
+                min="1"
+                max="240"
                 value={settings.estimatedWaitTimePerCustomer}
                 onChange={(e) =>
                   setSettings({
@@ -278,21 +282,21 @@ export default function WaitlistSettings() {
                     estimatedWaitTimePerCustomer: parseInt(e.target.value) || 0,
                   })
                 }
-                placeholder='15'
+                placeholder="15"
                 required
               />
-              <p className='text-sm text-gray-500 mt-1'>
+              <p className="text-sm text-gray-500 mt-1">
                 Average wait time per customer ahead in line
               </p>
             </div>
 
             <div>
-              <Label htmlFor='tableReadyNotificationMessage'>
+              <Label htmlFor="tableReadyNotificationMessage">
                 Table Ready Notification Message *
               </Label>
               <textarea
-                id='tableReadyNotificationMessage'
-                className='w-full p-3 border border-gray-300 rounded-md resize-vertical min-h-[100px]'
+                id="tableReadyNotificationMessage"
+                className="w-full p-3 border border-gray-300 rounded-md resize-vertical min-h-[100px]"
                 maxLength={500}
                 value={settings.tableReadyNotificationMessage}
                 onChange={(e) =>
@@ -301,50 +305,50 @@ export default function WaitlistSettings() {
                     tableReadyNotificationMessage: e.target.value,
                   })
                 }
-                placeholder='Your table is ready! Please come to the host stand.'
+                placeholder="Your table is ready! Please come to the host stand."
                 required
               />
-              <p className='text-sm text-gray-500 mt-1'>
+              <p className="text-sm text-gray-500 mt-1">
                 Message sent to customers when their table is ready (
                 {settings.tableReadyNotificationMessage.length}/500 characters)
               </p>
             </div>
 
-            <div className='bg-gray-50 p-4 rounded-lg'>
-              <h3 className='font-medium mb-3'>Current Settings Preview</h3>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-medium mb-3">Current Settings Preview</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className='font-medium'>Auto-Remove:</span>{" "}
+                  <span className="font-medium">Auto-Remove:</span>{" "}
                   {settings.autoRemoveMinutes} minutes
                 </div>
                 <div>
-                  <span className='font-medium'>Max Capacity:</span>{" "}
+                  <span className="font-medium">Max Capacity:</span>{" "}
                   {settings.maxCapacity} customers
                 </div>
                 <div>
-                  <span className='font-medium'>Wait Time Per Customer:</span>{" "}
+                  <span className="font-medium">Wait Time Per Customer:</span>{" "}
                   {settings.estimatedWaitTimePerCustomer} minutes
                 </div>
-                <div className='md:col-span-2'>
-                  <span className='font-medium'>Notification Message:</span>
-                  <p className='mt-1 text-gray-600 italic'>
-                    "{settings.tableReadyNotificationMessage}"
+                <div className="md:col-span-2">
+                  <span className="font-medium">Notification Message:</span>
+                  <p className="mt-1 text-gray-600 italic">
+                    &quot;{settings.tableReadyNotificationMessage}&quot;
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className='flex space-x-4'>
+            <div className="flex space-x-4">
               <Button
-                type='submit'
+                type="submit"
                 disabled={saving}
-                className='bg-blue-600 hover:bg-blue-700'
+                className="bg-blue-600 hover:bg-blue-700"
               >
                 {saving ? "Saving..." : "Save Settings"}
               </Button>
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={handleReset}
                 disabled={saving}
               >
@@ -355,25 +359,26 @@ export default function WaitlistSettings() {
         </CardContent>
       </Card>
 
-      <Card className='mt-6'>
+      <Card className="mt-6">
         <CardHeader>
           <CardTitle>How It Works</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='space-y-3 text-sm text-gray-600'>
+          <div className="space-y-3 text-sm text-gray-600">
             <div>
               <strong>Auto-Remove Timeout:</strong> Customers will be
-              automatically removed from the waitlist if they don't respond
+              automatically removed from the waitlist if they don&apos;t respond
               within the specified timeframe.
             </div>
             <div>
               <strong>Maximum Capacity:</strong> Once the waitlist reaches this
-              number, new customers won't be able to join until space becomes
-              available.
+              number, new customers won&apos;t be able to join until space
+              becomes available.
             </div>
             <div>
               <strong>Estimated Wait Time:</strong> This is multiplied by the
-              customer's position in line to give them an estimated wait time.
+              customer&apos;s position in line to give them an estimated wait
+              time.
             </div>
             <div>
               <strong>Notification Message:</strong> This message will be sent
