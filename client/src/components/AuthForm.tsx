@@ -177,69 +177,50 @@ export default function AuthForm() {
   };
 
   return (
-    <div className=" w-full max-w-md  mt-15 p-6 rounded-xl ">
-      <div className="flex justify-center mb-4">
-        <Image src="/logo.png" alt="Logo" width={250} height={100} />
-      </div>
-      <h2 className="text-red-600 text-2xl font-bold mb-4 text-center mt-8">
-        {isSignup ? "Sign Up" : "Log In"}
-      </h2>
+    <div className="w-full max-w-md mt-15 mb-15 p-6 rounded-xl bg-white shadow-lg border border-red-100">
+      <div className=" w-full max-w-md mt-5 p-6 rounded-xl ">
+        <div className="flex justify-center mb-4">
+          <Image src="/logo.png" alt="Logo" width={250} height={100} />
+        </div>
+        <h2 className="text-red-600 text-2xl font-bold mb-4 text-center">
+          {isSignup ? "Sign Up" : "Log In"}
+        </h2>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name */}
-          {isSignup && (
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-red-500">Full Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="bg-amber-50"
-                      type="text"
-                      placeholder="Enter your full name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-          {/* Email */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-red-500">Email</FormLabel>
-                <FormControl>
-                  <Input
-                    className="bg-amber-50"
-                    type="email"
-                    placeholder="you@example.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Name */}
+            {isSignup && (
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-red-500">Full Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-amber-50 border-red-200 focus:border-red-400"
+                        type="text"
+                        placeholder="Enter your full name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
-          />
-          {/* Phone */}
-          {isSignup && (
+            {/* Email */}
             <FormField
               control={form.control}
-              name="phone"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-red-500">Phone Number</FormLabel>
+                  <FormLabel className="text-red-500">Email</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-amber-50"
-                      type="text"
-                      placeholder="333-333-3333"
+                      className="bg-amber-50 border-red-200 focus:border-red-400"
+                      type="email"
+                      placeholder="you@example.com"
                       {...field}
                     />
                   </FormControl>
@@ -247,13 +228,37 @@ export default function AuthForm() {
                 </FormItem>
               )}
             />
-          )}
-          {/* Role default hidden customer */}
-          {isSignup && (
-            <input type="hidden" value="customer" {...form.register("role")} />
-          )}
-          {/* Role dropdown (only for Sign Up) */}
-          {/* {isSignup && (
+            {/* Phone */}
+            {isSignup && (
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-red-500">Phone Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-amber-50 border-red-200 focus:border-red-400"
+                        type="text"
+                        placeholder="333-333-3333"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {/* Role default hidden customer */}
+            {isSignup && (
+              <input
+                type="hidden"
+                value="customer"
+                {...form.register("role")}
+              />
+            )}
+            {/* Role dropdown (only for Sign Up) */}
+            {/* {isSignup && (
             <FormField
               control={form.control}
               name="role"
@@ -284,41 +289,18 @@ export default function AuthForm() {
             />
           )} */}
 
-          {/* Password */}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-red-500">Password</FormLabel>
-                <FormControl>
-                  <Input
-                    className="bg-amber-50"
-                    type="password"
-                    placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Confirm Password (only for Sign Up) */}
-          {isSignup && (
+            {/* Password */}
             <FormField
               control={form.control}
-              name="confirmPassword"
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-red-500">
-                    Confirm Password
-                  </FormLabel>
+                  <FormLabel className="text-red-500">Password</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-amber-50"
+                      className="bg-amber-50 border-red-200 focus:border-red-400"
                       type="password"
-                      placeholder="Confirm your password"
+                      placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
                       {...field}
                     />
                   </FormControl>
@@ -326,46 +308,70 @@ export default function AuthForm() {
                 </FormItem>
               )}
             />
+
+            {/* Confirm Password (only for Sign Up) */}
+            {isSignup && (
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-red-500">
+                      Confirm Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-amber-50 border-red-200 focus:border-red-400"
+                        type="password"
+                        placeholder="Confirm your password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-500 text-white"
+            >
+              {isSignup ? "Create Account" : "Log In"}
+            </Button>
+          </form>
+        </Form>
+
+        <div className="text-sm mt-4 text-center">
+          {isSignup ? (
+            <>
+              Already have an account?{" "}
+              <button
+                className="text-blue-600 hover:underline"
+                onClick={() => {
+                  setIsSignup(false);
+                  router.push("/auth?mode=login");
+                }}
+              >
+                Log In
+              </button>
+            </>
+          ) : (
+            <>
+              Don&apos;t have an account?{" "}
+              <button
+                className="text-blue-600 hover:underline"
+                onClick={() => {
+                  setIsSignup(true);
+                  router.push("/auth?mode=signup");
+                }}
+              >
+                Sign Up
+              </button>
+            </>
           )}
-
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full bg-red-600 hover:bg-red-500 text-white"
-          >
-            {isSignup ? "Create Account" : "Log In"}
-          </Button>
-        </form>
-      </Form>
-
-      <div className="text-sm mt-4 text-center">
-        {isSignup ? (
-          <>
-            Already have an account?{" "}
-            <button
-              className="text-blue-600 hover:underline"
-              onClick={() => {
-                setIsSignup(false);
-                router.push("/auth?mode=login");
-              }}
-            >
-              Log In
-            </button>
-          </>
-        ) : (
-          <>
-            Don&apos;t have an account?{" "}
-            <button
-              className="text-blue-600 hover:underline"
-              onClick={() => {
-                setIsSignup(true);
-                router.push("/auth?mode=signup");
-              }}
-            >
-              Sign Up
-            </button>
-          </>
-        )}
+        </div>
       </div>
     </div>
   );
