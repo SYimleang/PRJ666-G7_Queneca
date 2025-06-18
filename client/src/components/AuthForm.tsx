@@ -38,7 +38,7 @@ const formSchema = z.object({
     .regex(/[0-9]/, "Password must contain at least one number")
     .regex(
       /[^A-Za-z0-9]/,
-      "Password must contain at least one special character",
+      "Password must contain at least one special character"
     ),
   name: z.string().optional(),
   confirmPassword: z.string().optional(),
@@ -160,7 +160,7 @@ export default function AuthForm() {
         } else if (decoded.role === "staff") {
           router.push("/staff");
         } else {
-          router.push("/customer");
+          router.push("/");
         }
       } else {
         alert("Successfully created account! Please log in.");
@@ -179,30 +179,30 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-md mt-15 mb-15 p-6 rounded-xl bg-white shadow-lg border border-red-100">
-      <div className=" w-full max-w-md mt-5 p-6 rounded-xl ">
-        <div className="flex justify-center mb-4">
-          <Image src="/logo.png" alt="Logo" width={250} height={100} />
+    <div className='w-full max-w-md mt-15 mb-15 p-6 rounded-xl bg-white shadow-lg border border-red-100'>
+      <div className=' w-full max-w-md mt-5 p-6 rounded-xl '>
+        <div className='flex justify-center mb-4'>
+          <Image src='/logo.png' alt='Logo' width={250} height={100} />
         </div>
-        <h2 className="text-red-600 text-2xl font-bold mb-4 text-center">
+        <h2 className='text-red-600 text-2xl font-bold mb-4 text-center'>
           {isSignup ? "Sign Up" : "Log In"}
         </h2>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             {/* Name */}
             {isSignup && (
               <FormField
                 control={form.control}
-                name="name"
+                name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-red-500">Full Name</FormLabel>
+                    <FormLabel className='text-red-500'>Full Name</FormLabel>
                     <FormControl>
                       <Input
-                        className="bg-amber-50 border-red-200 focus:border-red-400"
-                        type="text"
-                        placeholder="Enter your full name"
+                        className='bg-amber-50 border-red-200 focus:border-red-400'
+                        type='text'
+                        placeholder='Enter your full name'
                         {...field}
                       />
                     </FormControl>
@@ -214,15 +214,15 @@ export default function AuthForm() {
             {/* Email */}
             <FormField
               control={form.control}
-              name="email"
+              name='email'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-red-500">Email</FormLabel>
+                  <FormLabel className='text-red-500'>Email</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-amber-50 border-red-200 focus:border-red-400"
-                      type="email"
-                      placeholder="you@example.com"
+                      className='bg-amber-50 border-red-200 focus:border-red-400'
+                      type='email'
+                      placeholder='you@example.com'
                       {...field}
                     />
                   </FormControl>
@@ -234,15 +234,15 @@ export default function AuthForm() {
             {isSignup && (
               <FormField
                 control={form.control}
-                name="phone"
+                name='phone'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-red-500">Phone Number</FormLabel>
+                    <FormLabel className='text-red-500'>Phone Number</FormLabel>
                     <FormControl>
                       <Input
-                        className="bg-amber-50 border-red-200 focus:border-red-400"
-                        type="text"
-                        placeholder="333-333-3333"
+                        className='bg-amber-50 border-red-200 focus:border-red-400'
+                        type='text'
+                        placeholder='333-333-3333'
                         {...field}
                       />
                     </FormControl>
@@ -254,8 +254,8 @@ export default function AuthForm() {
             {/* Role default hidden customer */}
             {isSignup && (
               <input
-                type="hidden"
-                value="customer"
+                type='hidden'
+                value='customer'
                 {...form.register("role")}
               />
             )}
@@ -294,15 +294,15 @@ export default function AuthForm() {
             {/* Password */}
             <FormField
               control={form.control}
-              name="password"
+              name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-red-500">Password</FormLabel>
+                  <FormLabel className='text-red-500'>Password</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-amber-50 border-red-200 focus:border-red-400"
-                      type="password"
-                      placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
+                      className='bg-amber-50 border-red-200 focus:border-red-400'
+                      type='password'
+                      placeholder='&#9679;&#9679;&#9679;&#9679;&#9679;'
                       {...field}
                     />
                   </FormControl>
@@ -315,17 +315,17 @@ export default function AuthForm() {
             {isSignup && (
               <FormField
                 control={form.control}
-                name="confirmPassword"
+                name='confirmPassword'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-red-500">
+                    <FormLabel className='text-red-500'>
                       Confirm Password
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="bg-amber-50 border-red-200 focus:border-red-400"
-                        type="password"
-                        placeholder="Confirm your password"
+                        className='bg-amber-50 border-red-200 focus:border-red-400'
+                        type='password'
+                        placeholder='Confirm your password'
                         {...field}
                       />
                     </FormControl>
@@ -337,20 +337,20 @@ export default function AuthForm() {
 
             {/* Submit Button */}
             <Button
-              type="submit"
-              className="w-full bg-red-600 hover:bg-red-500 text-white"
+              type='submit'
+              className='w-full bg-red-600 hover:bg-red-500 text-white'
             >
               {isSignup ? "Create Account" : "Log In"}
             </Button>
           </form>
         </Form>
 
-        <div className="text-sm mt-4 text-center">
+        <div className='text-sm mt-4 text-center'>
           {isSignup ? (
             <>
               Already have an account?{" "}
               <button
-                className="text-blue-600 hover:underline"
+                className='text-blue-600 hover:underline'
                 onClick={() => {
                   setIsSignup(false);
                   router.push("/auth?mode=login");
@@ -363,7 +363,7 @@ export default function AuthForm() {
             <>
               Don&apos;t have an account?{" "}
               <button
-                className="text-blue-600 hover:underline"
+                className='text-blue-600 hover:underline'
                 onClick={() => {
                   setIsSignup(true);
                   router.push("/auth?mode=signup");

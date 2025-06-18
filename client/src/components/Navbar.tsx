@@ -35,33 +35,33 @@ export default function Navbar() {
       case "staff":
         return "/staff";
       case "customer":
-        return "/customer";
+        return "/";
       default:
         return "/";
     }
   };
 
   return (
-    <header className="w-full bg-white shadow px-4 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className='w-full bg-white shadow px-4 py-3'>
+      <div className='max-w-7xl mx-auto flex items-center justify-between'>
         {/* Left Section */}
-        <div className="flex items-center gap-6">
+        <div className='flex items-center gap-6'>
           {/* Logo */}
           <Link href={getDashboardLink()}>
-            <Image src="/logo.png" alt="Logo" width={200} height={45} />
+            <Image src='/logo.png' alt='Logo' width={200} height={45} />
           </Link>
 
           {/* Links */}
-          <nav className="hidden md:flex gap-4 text-sm font-medium">
+          <nav className='hidden md:flex gap-4 text-sm font-medium'>
             <Link
-              href="/about"
-              className="text-red-600 hover:text-red-500 transition-colors"
+              href='/about'
+              className='text-red-600 hover:text-red-500 transition-colors'
             >
               About Us
             </Link>
             <Link
-              href="/faqs"
-              className="text-red-600 hover:text-red-500 transition-colors"
+              href='/faqs'
+              className='text-red-600 hover:text-red-500 transition-colors'
             >
               Support
             </Link>
@@ -69,34 +69,28 @@ export default function Navbar() {
 
           {/* Search Bar */}
           <Input
-            type="text"
-            placeholder="Search..."
-            className="bg-amber-50 w-48 md:w-64"
+            type='text'
+            placeholder='Search...'
+            className='bg-amber-50 w-48 md:w-64'
           />
-          <Link
-            href="/restaurant-registration"
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-          >
-            Restaurant Registration (temp)
-          </Link>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className='flex items-center gap-3'>
           {user ? (
-            <div ref={dropdownRef} className="relative inline-block text-left">
+            <div ref={dropdownRef} className='relative inline-block text-left'>
               <button
                 onClick={() => setOpen(!open)}
-                className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded"
+                className='bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded'
               >
                 {user.name}
               </button>
 
               {open && (
-                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+                <div className='absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10'>
                   <Link
-                    href="/edit-user"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    href='/edit-user'
+                    className='block px-4 py-2 hover:bg-gray-100'
                     onClick={() => setOpen(false)}
                   >
                     Edit Profile
@@ -106,8 +100,8 @@ export default function Navbar() {
                       setUser(null);
                       setOpen(false);
                     }}
-                    href="/auth?mode=login"
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                    href='/auth?mode=login'
+                    className='w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600'
                   >
                     Log Out
                   </Link>
@@ -116,16 +110,16 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              <Link href="/auth?mode=login">
+              <Link href='/auth?mode=login'>
                 <Button
-                  className="text-red-500 hover:text-red-600"
-                  variant="ghost"
+                  className='text-red-500 hover:text-red-600'
+                  variant='ghost'
                 >
                   Log In
                 </Button>
               </Link>
-              <Link href="/auth?mode=signup">
-                <Button className="bg-red-600 text-white hover:bg-red-500">
+              <Link href='/auth?mode=signup'>
+                <Button className='bg-red-600 text-white hover:bg-red-500'>
                   Sign Up
                 </Button>
               </Link>

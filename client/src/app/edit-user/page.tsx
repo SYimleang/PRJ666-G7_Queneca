@@ -25,7 +25,7 @@ export default function EditUserPage() {
       case "staff":
         return "/staff";
       case "customer":
-        return "/customer";
+        return "/";
       default:
         return "/";
     }
@@ -41,7 +41,7 @@ export default function EditUserPage() {
   }, [loading, user, router]);
 
   if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
+    return <div className='text-center mt-20'>Loading...</div>;
   }
 
   if (!user) return null;
@@ -79,57 +79,57 @@ export default function EditUserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
-      <div className="max-w-md mx-auto p-1">
-        <div className="w-full mt-20 max-w-md p-6 rounded-xl bg-white shadow-lg border border-red-100">
-          <h1 className="text-2xl font-bold mb-6 text-red-500 text-center">
+    <div className='min-h-screen bg-gradient-to-br from-red-50 to-orange-50'>
+      <div className='max-w-md mx-auto p-1'>
+        <div className='w-full mt-20 max-w-md p-6 rounded-xl bg-white shadow-lg border border-red-100'>
+          <h1 className='text-2xl font-bold mb-6 text-red-500 text-center'>
             Edit Profile
           </h1>
 
-          <label className="block mb-2 text-sm font-medium text-red-500">
+          <label className='block mb-2 text-sm font-medium text-red-500'>
             Full Name
           </label>
           <Input
-            type="text"
+            type='text'
             value={name}
-            className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
+            className='mb-4 border-red-200 focus:border-red-400 bg-amber-50'
             onChange={(e) => setName(e.target.value)}
           />
-          <label className="block mb-2 text-sm font-medium text-red-500">
+          <label className='block mb-2 text-sm font-medium text-red-500'>
             Email
           </label>
           <Input
-            type="email"
+            type='email'
             value={email}
-            className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
+            className='mb-4 border-red-200 focus:border-red-400 bg-amber-50'
             onChange={(e) => setEmail(e.target.value)}
           />
-          <label className="block mb-2 text-sm font-medium text-red-500">
+          <label className='block mb-2 text-sm font-medium text-red-500'>
             Phone
           </label>
           <Input
-            type="text"
+            type='text'
             value={phone}
-            className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
+            className='mb-4 border-red-200 focus:border-red-400 bg-amber-50'
             onChange={(e) => setPhone(e.target.value)}
           />
-          <label className="block mb-2 text-sm font-medium text-red-500">
+          <label className='block mb-2 text-sm font-medium text-red-500'>
             Current Password
           </label>
           <Input
-            type="password"
+            type='password'
             value={curPassword}
-            className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
+            className='mb-4 border-red-200 focus:border-red-400 bg-amber-50'
             onChange={(e) => setCurPassword(e.target.value)}
           />
-          <div className="flex justify-between gap-2">
+          <div className='flex justify-between gap-2'>
             <Button
               onClick={handleSave}
-              className="bg-red-600 hover:bg-red-500 text-white"
+              className='bg-red-600 hover:bg-red-500 text-white'
             >
               Save Changes
             </Button>
-            <Button onClick={handleLogout} variant="outline">
+            <Button onClick={handleLogout} variant='outline'>
               Sign Out
             </Button>
           </div>
