@@ -8,6 +8,8 @@ import userRoutes from "./routes/users";
 import restaurantRoutes from "./routes/restaurants";
 import menuRoutes from "./routes/menus";
 import adminRoutes from "./routes/admin";
+import termsRouter from "./routes/terms";
+import faqsRouter from "./routes/faqs";
 import { connectDB } from "./config/database";
 
 const app = express();
@@ -23,6 +25,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/admin", adminRoutes);
+app.use('/api/terms', termsRouter);
+app.use('/api/faqs', faqsRouter);
 
 // Default Route
 app.get("/", (_req, res) => {
