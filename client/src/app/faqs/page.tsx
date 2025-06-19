@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser } from "../../context/UserContext";
-import { useRouter } from "next/navigation";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
@@ -16,8 +14,6 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useUser();
-  const router = useRouter();
 
   useEffect(() => {
     fetch(`${apiUrl}/api/faqs`)
@@ -35,17 +31,6 @@ export default function FAQPage() {
       <h1 className="text-3xl font-bold text-center text-red-600 mb-8">
         Frequently Asked Questions
       </h1>
-
-      {user?.role === "admin" && (
-        <div className="mb-8 text-right">
-          <button
-            onClick={() => router.push("/admin/faqs")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          >
-            Edit FAQs
-          </button>
-        </div>
-      )}
 
       {loading && <p>Loading FAQs...</p>}
       {error && <p className="text-red-600">{error}</p>}

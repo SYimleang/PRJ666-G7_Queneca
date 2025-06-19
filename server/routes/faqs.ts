@@ -21,15 +21,4 @@ router.get("/", (_req, res) => {
   });
 });
 
-// POST /api/faqs (for admin update)
-router.post("/", (req, res) => {
-  const updatedFaqs = req.body;
-  fs.writeFile(faqsPath, JSON.stringify(updatedFaqs, null, 2), "utf8", (err) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to save FAQs." });
-    }
-    res.json({ message: "FAQs updated successfully." });
-  });
-});
-
 export default router;
