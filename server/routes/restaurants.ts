@@ -16,10 +16,10 @@ const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
 // POST /api/restaurants - Create Restaurant
 router.post('/', authenticate, (async (req: AuthRequest, res: Response) => {
   try {
-    const { name, phone, location, hours } = req.body;
+    const { name, phone, location, logoUrl } = req.body;
     const adminId = req.user!.id;
     // Validate required fields
-    if (!name || !phone || !location || !hours) {
+    if (!name || !phone || !location) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -35,13 +35,6 @@ router.post('/', authenticate, (async (req: AuthRequest, res: Response) => {
         .json({ message: 'Complete location information is required' });
     }
 
-    // Validate hours fields
-    if (!hours.open || !hours.close) {
-      return res
-        .status(400)
-        .json({ message: 'Opening and closing hours are required' });
-    }
-
     // Check if admin already has a restaurant
     const existingRestaurant = await Restaurant.findOne({ ownerId: adminId });
     if (existingRestaurant) {
@@ -55,8 +48,8 @@ router.post('/', authenticate, (async (req: AuthRequest, res: Response) => {
       name,
       phone,
       location,
-      hours,
       ownerId: adminId,
+      logoUrl,
     });
 
     // generate qr
@@ -146,7 +139,7 @@ router.put('/:id', authenticate, requireAdmin, (async (
 ) => {
   try {
     const { id } = req.params;
-    const { name, phone, location, hours } = req.body;
+    const { name, phone, location, hours, logoUrl } = req.body;
     const adminId = req.user!.id;
 
     // Validate required fields
@@ -165,12 +158,13 @@ router.put('/:id', authenticate, requireAdmin, (async (
         .status(400)
         .json({ message: 'Complete location information is required' });
     }
-
-    // Validate hours fields
-    if (!hours.open || !hours.close) {
-      return res
-        .status(400)
-        .json({ message: 'Opening and closing hours are required' });
+    // If hours is provided, validate it
+    if (hours !== undefined) {
+      if (!Array.isArray(hours)) {
+        return res
+          .status(400)
+          .json({ message: '`hours` must be an array if provided' });
+      }
     }
 
     // Check if restaurant exists and belongs to the admin
@@ -185,10 +179,26 @@ router.put('/:id', authenticate, requireAdmin, (async (
         .json({ message: 'You can only update your own restaurant' });
     }
 
+    // Build update object dynamically
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateFields: any = {
+      name,
+      phone,
+      location,
+    };
+
+    if (hours !== undefined) {
+      updateFields.hours = hours;
+    }
+
+    if (logoUrl !== undefined) {
+      updateFields.logoUrl = logoUrl;
+    }
+
     // Update restaurant
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
-      { name, phone, location, hours },
+      updateFields,
       { new: true }
     );
 
