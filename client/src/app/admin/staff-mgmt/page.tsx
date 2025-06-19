@@ -182,6 +182,8 @@ export default function StaffManagement() {
         <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
       )}
 
+      {loading && <p>Loading staff...</p>}
+
       {(showForm || editingStaff) && (
         <Card className="mb-6">
           <CardHeader>

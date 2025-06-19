@@ -119,7 +119,7 @@ export default function AdminNav() {
         {/* Staff Management */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/staff-mgmt">Staff Management</Link>
+            <Link href="/admin/staff-mgmt">Staff Management</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         {/* Menu Management */}
