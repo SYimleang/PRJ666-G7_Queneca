@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useUser } from "@/context/UserContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";

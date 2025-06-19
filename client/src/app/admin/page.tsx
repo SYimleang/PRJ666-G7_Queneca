@@ -10,6 +10,7 @@ import AdminNav from "@/components/AdminNav";
 import { useRestaurant } from "@/context/RestaurantContext";
 import { useUser } from "@/context/UserContext";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function AdminDashboardPage() {
   const { restaurant } = useRestaurant();
@@ -131,12 +132,12 @@ export default function AdminDashboardPage() {
                       Operating Hours
                     </h3>
                     <p className="mb-1">Operating hours not set.</p>
-                    <a
+                    <Link
                       href="/admin/restaurant-config"
                       className="inline-block text-sm text-red-600 underline hover:text-red-800"
                     >
                       Set hours here
-                    </a>
+                    </Link>
                   </div>
                 </div>
               )}
