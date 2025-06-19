@@ -7,7 +7,6 @@ export interface IWaitlistSettings {
 }
 
 export interface IRestaurant {
-  _id: string;
   name: string;
   phone: string;
   location: {
@@ -16,10 +15,11 @@ export interface IRestaurant {
     region: string;
     zip: string;
   };
-  hours: {
+  hours?: {
+    day: string;
     open: string;
     close: string;
-  };
+  }[]; // optional array of daily hours
   rating?: number;
   ownerId: string;
   logoUrl?: string;

@@ -20,19 +20,44 @@ import { Button } from "@/components/ui/button";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
+const phoneRegex = /^[\d\s\-()+]{7,15}$/; // Accepts numbers, spaces, dashes, (), + — min 7 digits
+const zipRegex = /^[A-Za-z0-9\s-]{4,10}$/; // General ZIP/postal code format
 const formSchema = z.object({
-  name: z.string(),
-  phone: z.string(),
-  address: z.string(),
-  city: z.string(),
-  region: z.string(),
-  zip: z.string(),
-  openHour: z.string(),
-  closeHour: z.string(),
-  logo: z.string(),
+  name: z
+    .string()
+    .min(2, { message: "Restaurant name must be at least 2 characters" })
+    .max(100, { message: "Name is too long" }),
+
+  phone: z
+    .string()
+    .regex(phoneRegex, { message: "Invalid phone number format" }),
+
+  address: z
+    .string()
+    .min(5, { message: "Address must be at least 5 characters" }),
+
+  city: z.string().min(2, { message: "City must be at least 2 characters" }),
+
+  region: z.string().min(2, { message: "Province or region is required" }),
+
+  zip: z.string().regex(zipRegex, { message: "Invalid postal code or ZIP" }),
+
+  logoUrl: z
+    .string()
+    .url({ message: "Must be a valid URL" })
+    .regex(/\.(jpg|jpeg|png|webp|gif|svg)$/i, {
+      message: "Logo must be an image URL (.jpg, .png, etc.)",
+    }),
 });
 
+function isValidImageUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(parsed.pathname);
+  } catch {
+    return false;
+  }
+}
 type FormValues = z.infer<typeof formSchema>;
 
 export default function RestaurantForm() {
@@ -51,9 +76,7 @@ export default function RestaurantForm() {
       city: "",
       region: "",
       zip: "",
-      openHour: "",
-      closeHour: "",
-      logo: "",
+      logoUrl: "",
     } as FormValues,
   });
 
@@ -61,19 +84,19 @@ export default function RestaurantForm() {
     const dataToSend = {
       name: data.name,
       phone: data.phone,
-      logo: data.logo,
+      logoUrl: data.logoUrl,
       location: {
         address: data.address,
         city: data.city,
         region: data.region,
         zip: data.zip,
       },
-      hours: {
-        open: data.openHour,
-        close: data.closeHour,
-      },
     };
     try {
+      if (data.logoUrl && !isValidImageUrl(data.logoUrl)) {
+        alert("invalid image url");
+        return;
+      }
       if (!user) {
         alert("user not found");
         return;
@@ -255,53 +278,25 @@ export default function RestaurantForm() {
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Opening Hour */}
-                <FormField
-                  control={form.control}
-                  name="openHour"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-red-500">
-                        Opening Hour
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className="bg-amber-50 border-red-200 focus:border-red-400 "
-                          type="text"
-                          placeholder="3"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* Closing Hour */}
-                <FormField
-                  control={form.control}
-                  name="closeHour"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-red-500">
-                        Closing Hour
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className="bg-amber-50 border-red-200 focus:border-red-400 "
-                          type="text"
-                          placeholder="8"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Role default hidden customer dont think needed*/}
-              {/* <input type="hidden" value="customer" {...form.register('role')} /> */}
+              {/* Image URL */}
+              <FormField
+                control={form.control}
+                name="logoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-red-500">Image URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-amber-50 border-red-200 focus:border-red-400"
+                        type="url"
+                        placeholder="https://example.com/logo.png"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="flex space-x-5 justify-center items-center">
                 {/* Submit Button */}

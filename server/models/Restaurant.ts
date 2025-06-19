@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IWaitlistSettings {
   autoRemoveMinutes: number;
@@ -13,23 +13,21 @@ export interface IRestaurant extends Document {
   location: {
     address: string;
     city: string;
-    state: string;
+    region: string;
     zip: string;
   };
-  hours: {
+  hours?: {
+    day: string;
     open: string;
     close: string;
-  };
+  }[]; // optional array of daily hours
   rating?: number;
   ownerId: mongoose.Types.ObjectId; // User with role=admin
-  logoUrl: string;
-  qrCode: string;
+  logoUrl?: string;
+  qrCode?: string;
   waitlistSettings: IWaitlistSettings;
   createdAt: Date;
   updatedAt: Date;
-  // waitlist ID
-  // staff list ID
-  // menu ID
 }
 
 const waitlistSettingsSchema = new Schema<IWaitlistSettings>(
@@ -39,7 +37,7 @@ const waitlistSettingsSchema = new Schema<IWaitlistSettings>(
     estimatedWaitTimePerCustomer: { type: Number, default: 15 },
     tableReadyNotificationMessage: {
       type: String,
-      default: "Your table is ready! Please come to the host stand.",
+      default: 'Your table is ready! Please come to the host stand.',
     },
   },
   { _id: false }
@@ -55,12 +53,15 @@ const restaurantSchema = new Schema<IRestaurant>(
       region: { type: String, required: true }, // province/state
       zip: { type: String, required: true },
     },
-    hours: {
-      open: { type: String, required: true },
-      close: { type: String, required: true },
-    },
+    hours: [
+      {
+        day: { type: String, required: false },
+        open: { type: String },
+        close: { type: String },
+      },
+    ],
     rating: { type: Number, default: 0 },
-    ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     logoUrl: { type: String, required: false },
     qrCode: { type: String, required: false },
     waitlistSettings: { type: waitlistSettingsSchema, default: () => ({}) },
@@ -68,4 +69,4 @@ const restaurantSchema = new Schema<IRestaurant>(
   { timestamps: true }
 );
 
-export default mongoose.model<IRestaurant>("Restaurant", restaurantSchema);
+export default mongoose.model<IRestaurant>('Restaurant', restaurantSchema);
