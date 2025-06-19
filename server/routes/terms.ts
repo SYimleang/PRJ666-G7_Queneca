@@ -23,15 +23,4 @@ router.get('/', (_req, res) => {
   });
 });
 
-// POST /api/terms
-router.post('/', (req, res) => {
-  const newTerms = req.body;
-  fs.writeFile(dataPath, JSON.stringify(newTerms, null, 2), 'utf8', (err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Failed to save terms data.' });
-    }
-    res.json({ message: 'Terms updated successfully.' });
-  });
-});
-
 export default router;

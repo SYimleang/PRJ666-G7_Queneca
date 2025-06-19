@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useUser } from "../../context/UserContext";
-import { useRouter } from "next/navigation";
 
 const contactEmail = "support@queneca.com";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
@@ -16,9 +14,6 @@ export default function TermsPage() {
   const [termsData, setTermsData] = useState<TermsSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const { user } = useUser();
-  const router = useRouter();
 
   useEffect(() => {
     fetch(`${apiUrl}/api/terms`)
@@ -36,14 +31,6 @@ export default function TermsPage() {
       <h1 className="text-3xl font-bold text-red-600 mb-4">Terms of Use</h1>
       <p className="text-sm text-gray-500 mb-10">Last updated: June 2025</p>
       {/* Show Edit button only for admin */}
-      {user?.role === "admin" && (
-        <button
-          className="mb-8 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-          onClick={() => router.push("/admin/terms")}
-        >
-          Edit
-        </button>
-      )}
       <section className="space-y-10 text-gray-700 text-sm leading-6">
         {loading && <p>Loading terms...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
