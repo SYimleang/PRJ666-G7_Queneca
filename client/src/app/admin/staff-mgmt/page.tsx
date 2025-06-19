@@ -33,7 +33,7 @@ export default function StaffManagement() {
     role: "staff",
     active: true,
   });
-  const [editingStaff, seteditingStaff] = useState<number | null>(null);
+  const [editingStaff, setEditingStaff] = useState<number | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
@@ -125,7 +125,7 @@ export default function StaffManagement() {
   };
 
   const handleEdit = (index: number) => {
-    seteditingStaff(index);
+    setEditingStaff(index);
     setFormData(staff[index]);
     setShowForm(true);
   };
@@ -162,7 +162,7 @@ export default function StaffManagement() {
 
   const resetForm = () => {
     setFormData({ name: "", email: "", role: "staff", active: true });
-    seteditingStaff(null);
+    setEditingStaff(null);
     setShowForm(false);
   };
 
@@ -175,7 +175,10 @@ export default function StaffManagement() {
           <h1 className="text-3xl font-bold">Staff Management</h1>
           <p className="text-gray-600">Add and manage your restaurant staff</p>
         </div>
-        <Button onClick={() => setShowForm(true)}>Add New Staff</Button>
+        <Button 
+        onClick={() => setShowForm(true)}
+        className='bg-green-600 hover:bg-green-700'
+        >Add New Staff</Button>
       </div>
 
       {error && (
@@ -185,7 +188,7 @@ export default function StaffManagement() {
       {loading && <p>Loading staff...</p>}
 
       {(showForm || editingStaff) && (
-        <Card className="mb-6">
+        <Card className="mb-6 ">
           <CardHeader>
             <CardTitle>
               {editingStaff !== null ? "Edit Staff" : "Add New Staff"}
@@ -229,7 +232,10 @@ export default function StaffManagement() {
                 </select>
               </div>
               <div className="flex space-x-2">
-                <Button type="submit">
+                <Button 
+                type="submit"
+                className='bg-green-600 hover:bg-green-700'
+                >
                   {editingStaff !== null ? "Update" : "Add"}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -247,13 +253,19 @@ export default function StaffManagement() {
         ) : (
           staff.map((staff, index) => (
             <Card key={index}>
-              <CardContent className="p-4 flex justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg">{staff.name}</h3>
-                  <p className="text-sm text-gray-600">{staff.email}</p>
-                  <p className="text-sm text-gray-600 capitalize">Role: {staff.role}</p>
+              <CardContent className="grid grid-cols-6 p-4 gap-0 justify-center items-center">
+                <div className="col-span-1 flex justify-center items-center">
+                    <div className="relative inline-flex items-center justify-center w-15 h-15 rounded-full bg-gray-100 overflow-hidden">
+                        <span className="text-gray-600 text-lg font-semibold">{staff.name.split(' ').map(word => word[0]).join('')}</span>
+                    </div>
                 </div>
-                <div className="flex gap-2">
+                
+                <div className="justify-start">
+                  <h3 className="font-semibold text-lg">{staff.name}</h3>
+                  <p className="text-sm text-gray-600"><b>Email:</b> {staff.email}</p>
+                  <p className="text-sm text-gray-600 capitalize"><b>Role:</b> {staff.role}</p>
+                </div><div></div><div></div><div></div>
+                <div className="flex gap-2 justify-end">
                   <Button variant="outline" size="sm" onClick={() => handleEdit(index)}>
                     Edit
                   </Button>
