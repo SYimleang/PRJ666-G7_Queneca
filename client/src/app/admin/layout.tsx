@@ -5,10 +5,12 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
+    if (loading) return;
+
     // Not logged in
     if (!user) {
       router.replace("/login");
@@ -21,7 +23,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     else if (user.role == "customer") {
         router.replace("/");
     }
-  }, [user, router]);
+  }, [user, loading, router]);
+
+  // Show nothing or a spinner while loading
+  if (loading) return <div className="p-10">Loading...</div>;
 
   if (!user || user.role !== "admin") return null;
 
