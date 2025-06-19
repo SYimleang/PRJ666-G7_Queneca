@@ -7,6 +7,7 @@ import {
 } from "../middleware/auth";
 import User from "../models/User";
 import mongoose from "mongoose";
+import { hashPassword } from "../lib/auth";
 
 const router = express.Router();
 
@@ -82,13 +83,15 @@ router.put("/", authenticate, requireAdmin, (async (
         );
         if (updated) updatedUsers.push(updated);
       } else {
+        const password = "Changeme@123"; // default password for new staff
+        const hashedPassword = await hashPassword(password);
         // If no _id, create new staff
         const created = new User({
           name,
           email,
           role,
           phone: phone || "000-000-0000", // default phone
-          password: "changeme123",
+          password: hashedPassword,
           restaurantId: user.restaurantId,
         });
         const saved = await created.save();
