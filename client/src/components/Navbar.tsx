@@ -7,11 +7,18 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "../context/UserContext";
+import { IRestaurant } from "@/types/restaurant";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 export default function Navbar() {
   const { user, setUser } = useUser();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<IRestaurant[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -25,6 +32,27 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (query.trim()) {
+        fetch(`${apiUrl}/api/restaurants`)
+          .then((res) => res.json())
+          .then((data) => {
+            const filtered = data.restaurants.filter((r: IRestaurant) =>
+              r.name.toLowerCase().includes(query.toLowerCase())
+            );
+            setResults(filtered);
+            setShowDropdown(true);
+          });
+      } else {
+        setResults([]);
+        setShowDropdown(false);
+      }
+    }, 300); // debounce
+
+  return () => clearTimeout(delayDebounce);
+}, [query]);
 
   // Determine dashboard link based on role
   const getDashboardLink = () => {
@@ -68,11 +96,32 @@ export default function Navbar() {
           </nav>
 
           {/* Search Bar */}
+          <div className='relative'>
           <Input
-            type='text'
-            placeholder='Search...'
-            className='bg-amber-50 w-48 md:w-64'
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search..."
+            className="bg-amber-50 w-48 md:w-64"
           />
+          {showDropdown && results.length > 0 && (
+            <div className="absolute bg-white border border-gray-200 mt-1 rounded w-full shadow-md z-50">
+              {results.map((restaurant) => (
+                <Link
+                  key={restaurant._id}
+                  href={`/restaurants/${restaurant._id}`}
+                  className="block px-4 py-2 hover:bg-gray-100 text-sm"
+                  onClick={() => {
+                    setShowDropdown(false);
+                    setQuery("");
+                  }}
+                >
+                  {restaurant.name}
+                </Link>
+              ))}
+            </div>
+          )}
+          </div>
         </div>
 
         {/* Right Section */}
