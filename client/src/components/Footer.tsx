@@ -30,11 +30,6 @@ export default function Footer() {
                 Reviews
               </Link>
             </li>
-            {/* <li>
-              <Link href="/news" className="hover:text-red-500">
-                News
-              </Link>
-            </li> */}
           </ul>
         </div>
 
