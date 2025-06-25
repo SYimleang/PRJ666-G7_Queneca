@@ -7,6 +7,7 @@ export interface IWaitlistSettings {
 }
 
 export interface IRestaurant {
+  _id?: string;
   name: string;
   phone: string;
   location: {
