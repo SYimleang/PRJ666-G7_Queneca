@@ -15,18 +15,23 @@ export default function RestaurantInfoPage() {
   const [restaurant, setRestaurant] = useState<IRestaurant | null>(null);
   const [src, setSrc] = useState("/restaurant_logo.png");
   const [menuItems, setMenuItems] = useState<IMenuItem[]>([]);
-  const categories = ["Appetizer", "Main Course", "Dessert", "Beverage", "Side"];
+  const categories = [
+    "Appetizer",
+    "Main Course",
+    "Dessert",
+    "Beverage",
+    "Side",
+  ];
   const [isValidRestaurant, setIsValidRestaurant] = useState(true);
 
   // Synchronously trigger 404 page
   if (!isValidRestaurant) {
-    notFound(); 
+    notFound();
   }
 
   // useEffect to fetch restaurant data
   useEffect(() => {
     const fetchRestaurant = async () => {
-      
       try {
         const res = await fetch(`${apiUrl}/api/restaurants/${id}`);
 
@@ -38,13 +43,15 @@ export default function RestaurantInfoPage() {
 
         const data = await res.json();
         setRestaurant(data.restaurant);
-        
+
         if (data.restaurant.logoUrl) {
           setSrc(data.restaurant.logoUrl);
         }
 
         // Fetch the menu
-        const menuRes = await fetch(`${apiUrl}/api/menus/restaurant/${data.restaurant._id}`);
+        const menuRes = await fetch(
+          `${apiUrl}/api/menus/restaurant/${data.restaurant._id}`
+        );
         const menuData = await menuRes.json();
         console.log("Menu Data:", menuData);
         if (menuData.menu?.menuItems) {
@@ -94,7 +101,10 @@ export default function RestaurantInfoPage() {
                     {restaurant.location.address}, {restaurant.location.city},{" "}
                     {restaurant.location.region} {restaurant.location.zip}
                   </p>
-                  <p className="text-gray-700">Call: {restaurant.phone.slice(0, 3)}-{restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}</p>
+                  <p className="text-gray-700">
+                    Call: {restaurant.phone.slice(0, 3)}-
+                    {restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}
+                  </p>
 
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800">
@@ -141,11 +151,14 @@ export default function RestaurantInfoPage() {
             </>
           ) : null}
         </CardContent>
-      </Card><br />
+      </Card>
+      <br />
 
       <Card className="mb-6 bg-red-100">
         <CardHeader>
-          <CardTitle className="text-2xl text-center ">Restaurant Menu</CardTitle>
+          <CardTitle className="text-2xl text-center ">
+            Restaurant Menu
+          </CardTitle>
         </CardHeader>
       </Card>
 
@@ -154,7 +167,9 @@ export default function RestaurantInfoPage() {
         // Case: No menu at all
         <Card className="mb-6">
           <CardContent>
-            <p className="text-gray-500 text-center">No menu available for this restaurant.</p>
+            <p className="text-gray-500 text-center">
+              No menu available for this restaurant.
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -197,7 +212,6 @@ export default function RestaurantInfoPage() {
                         Ingredients: {item.ingredients}
                       </p>
                     </div>
-                    
                   </div>
                 ))}
               </CardContent>
