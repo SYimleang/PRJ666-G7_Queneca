@@ -11,6 +11,7 @@ import adminRoutes from "./routes/admin";
 import staffRouter from "./routes/staff";
 import termsRouter from "./routes/terms";
 import faqsRouter from "./routes/faqs";
+import reviewsRouter from "./routes/reviews";
 import { connectDB } from "./config/database";
 
 const app = express();
@@ -27,8 +28,9 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/staff-mgmt", staffRouter);
-app.use('/api/terms', termsRouter);
-app.use('/api/faqs', faqsRouter);
+app.use("/api/terms", termsRouter);
+app.use("/api/faqs", faqsRouter);
+app.use("/api/reviews", reviewsRouter);
 
 // Default Route
 app.get("/", (_req, res) => {
