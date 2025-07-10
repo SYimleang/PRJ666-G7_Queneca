@@ -43,6 +43,7 @@ router.get("/dashboard", authenticate, requireAdmin, (async (
 
     // Get waitlist data (placeholder - you may need to create a Waitlist model)
     // For now, we'll return an empty array
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const waitlist: any[] = [];
 
     // Calculate some basic stats
