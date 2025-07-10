@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { IRestaurant } from "@/types/restaurant";
 import { IMenuItem } from "@/types/menu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,25 +15,52 @@ export default function RestaurantInfoPage() {
   const [restaurant, setRestaurant] = useState<IRestaurant | null>(null);
   const [src, setSrc] = useState("/restaurant_logo.png");
   const [menuItems, setMenuItems] = useState<IMenuItem[]>([]);
-  const categories = ["Appetizer", "Main Course", "Dessert", "Beverage", "Side"];
+  const categories = [
+    "Appetizer",
+    "Main Course",
+    "Dessert",
+    "Beverage",
+    "Side",
+  ];
+  const [isValidRestaurant, setIsValidRestaurant] = useState(true);
+
+  // Synchronously trigger 404 page
+  if (!isValidRestaurant) {
+    notFound();
+  }
 
   // useEffect to fetch restaurant data
   useEffect(() => {
     const fetchRestaurant = async () => {
-      const res = await fetch(`${apiUrl}/api/restaurants/${id}`);
-      const data = await res.json();
-      setRestaurant(data.restaurant);
-      
-      if (data.restaurant.logoUrl) {
-        setSrc(data.restaurant.logoUrl);
-      }
+      try {
+        const res = await fetch(`${apiUrl}/api/restaurants/${id}`);
 
-      // Fetch the menu
-      const menuRes = await fetch(`${apiUrl}/api/menus/restaurant/${data.restaurant._id}`);
-      const menuData = await menuRes.json();
-      console.log("Menu Data:", menuData);
-      if (menuData.menu?.menuItems) {
-        setMenuItems(menuData.menu.menuItems);
+        if (!res.ok) {
+          // If restaurant is not found (404 from API), trigger the Next.js 404 page
+          setIsValidRestaurant(false);
+          return;
+        }
+
+        const data = await res.json();
+        setRestaurant(data.restaurant);
+
+        if (data.restaurant.logoUrl) {
+          setSrc(data.restaurant.logoUrl);
+        }
+
+        // Fetch the menu
+        const menuRes = await fetch(
+          `${apiUrl}/api/menus/restaurant/${data.restaurant._id}`
+        );
+        const menuData = await menuRes.json();
+        console.log("Menu Data:", menuData);
+        if (menuData.menu?.menuItems) {
+          setMenuItems(menuData.menu.menuItems);
+        }
+      } catch (error) {
+        console.error("Error fetching restaurant data:", error);
+        // If there's an error fetching the restaurant, trigger the Next.js 404 page
+        setIsValidRestaurant(false);
       }
     };
     fetchRestaurant();
@@ -49,7 +76,7 @@ export default function RestaurantInfoPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Restaurant Info</CardTitle>
         </CardHeader>
-        <CardContent className="grid xl:grid-cols-3 lg:grid-cols-2 gap-6 items-center">
+        <CardContent className="grid xl:grid-cols-2 lg:grid-cols-2 gap-6 items-center">
           {restaurant ? (
             <>
               {/* Logo on the left */}
@@ -74,7 +101,10 @@ export default function RestaurantInfoPage() {
                     {restaurant.location.address}, {restaurant.location.city},{" "}
                     {restaurant.location.region} {restaurant.location.zip}
                   </p>
-                  <p className="text-gray-700">Call: {restaurant.phone.slice(0, 3)}-{restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}</p>
+                  <p className="text-gray-700">
+                    Call: {restaurant.phone.slice(0, 3)}-
+                    {restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}
+                  </p>
 
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800">
@@ -108,19 +138,6 @@ export default function RestaurantInfoPage() {
                 </div>
               )}
 
-              {/* QR Code on the right */}
-              <div className="flex flex-col items-center justify-center border rounded-lg p-4 bg-gray-50">
-                {restaurant.qrCode && (
-                  <Image
-                    src={restaurant.qrCode}
-                    alt="QR Code"
-                    width={200}
-                    height={200}
-                    className="mb-4 lg:w-[200px] lg:h-[200px] md:w-[100px] md:h-[100px]"
-                  />
-                )}
-              </div>
-
               <div className="col-span-1 md:col-span-3 text-center mx-auto px-8">
                 <Button
                   className="mt-4 bg-red-600 hover:bg-red-500 text-white px-16 py-2 rounded"
@@ -134,11 +151,14 @@ export default function RestaurantInfoPage() {
             </>
           ) : null}
         </CardContent>
-      </Card><br />
+      </Card>
+      <br />
 
       <Card className="mb-6 bg-red-100">
         <CardHeader>
-          <CardTitle className="text-2xl text-center ">Restaurant Menu</CardTitle>
+          <CardTitle className="text-2xl text-center ">
+            Restaurant Menu
+          </CardTitle>
         </CardHeader>
       </Card>
 
@@ -147,7 +167,9 @@ export default function RestaurantInfoPage() {
         // Case: No menu at all
         <Card className="mb-6">
           <CardContent>
-            <p className="text-gray-500 text-center">No menu available for this restaurant.</p>
+            <p className="text-gray-500 text-center">
+              No menu available for this restaurant.
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -190,7 +212,6 @@ export default function RestaurantInfoPage() {
                         Ingredients: {item.ingredients}
                       </p>
                     </div>
-                    
                   </div>
                 ))}
               </CardContent>

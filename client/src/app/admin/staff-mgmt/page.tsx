@@ -2,12 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -40,7 +35,7 @@ export default function StaffManagement() {
 
   useEffect(() => {
     fetchStaff();
-  }, []);
+  });
 
   const fetchStaff = async () => {
     try {
@@ -52,8 +47,7 @@ export default function StaffManagement() {
       if (!res.ok) throw new Error("Failed to fetch staff list");
       const data = await res.json();
       console.log("Fetched staff data:", data);
-      setStaff(data.staff || []); 
-
+      setStaff(data.staff || []);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -75,9 +69,9 @@ export default function StaffManagement() {
     e.preventDefault();
 
     const validationError = validateForm();
-    if (validationError) {  
-        setError(validationError);
-        return;
+    if (validationError) {
+      setError(validationError);
+      return;
     }
 
     try {
@@ -91,8 +85,8 @@ export default function StaffManagement() {
       if (editingStaff) {
         // Update existing staff
         updateStaff = staff?.map((s, idxStaff) =>
-            idxStaff === editingStaff ? { ...s, ...(formData as IUser) } : s
-            );  
+          idxStaff === editingStaff ? { ...s, ...(formData as IUser) } : s
+        );
       } else {
         updateStaff = [...(staff || []), formData as IUser];
       }
@@ -134,23 +128,23 @@ export default function StaffManagement() {
     if (!confirm("Delete this staff member?")) return;
 
     try {
-        if (!user?.token) {
+      if (!user?.token) {
         throw new Error("No authentication token found");
-        }
+      }
 
-        const staffToDelete = staff[index];
+      const staffToDelete = staff[index];
 
-        console.log("Deleting staff:", staffToDelete._id);
+      console.log("Deleting staff:", staffToDelete._id);
 
-        const res = await fetch(`${apiUrl}/api/staff-mgmt/${staffToDelete._id}`, {
-            method: "DELETE",
-            headers: {
-            Authorization: `Bearer ${user?.token}`,
-            },
-        });
+      const res = await fetch(`${apiUrl}/api/staff-mgmt/${staffToDelete._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
 
-        if (!res.ok) throw new Error("Failed to delete staff");
-        await fetchStaff();
+      if (!res.ok) throw new Error("Failed to delete staff");
+      await fetchStaff();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -175,10 +169,12 @@ export default function StaffManagement() {
           <h1 className="text-3xl font-bold">Staff Management</h1>
           <p className="text-gray-600">Add and manage your restaurant staff</p>
         </div>
-        <Button 
-        onClick={() => setShowForm(true)}
-        className='bg-green-600 hover:bg-green-700'
-        >Add New Staff</Button>
+        <Button
+          onClick={() => setShowForm(true)}
+          className="bg-green-600 hover:bg-green-700"
+        >
+          Add New Staff
+        </Button>
       </div>
 
       {error && (
@@ -220,21 +216,21 @@ export default function StaffManagement() {
               <div>
                 <Label>Role *</Label>
                 <select
-                className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded px-3 py-2"
                   value={formData.role || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
                   required
                 >
-                            <option value="admin">Admin</option>
-                <option value="staff">Staff</option>
+                  <option value="admin">Admin</option>
+                  <option value="staff">Staff</option>
                 </select>
               </div>
               <div className="flex space-x-2">
-                <Button 
-                type="submit"
-                className='bg-green-600 hover:bg-green-700'
+                <Button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-700"
                 >
                   {editingStaff !== null ? "Update" : "Add"}
                 </Button>
@@ -255,18 +251,34 @@ export default function StaffManagement() {
             <Card key={index}>
               <CardContent className="grid grid-cols-6 p-4 gap-0 justify-center items-center">
                 <div className="col-span-1 flex justify-center items-center">
-                    <div className="relative inline-flex items-center justify-center w-15 h-15 rounded-full bg-gray-100 overflow-hidden">
-                        <span className="text-gray-600 text-lg font-semibold">{staff.name.split(' ').map(word => word[0]).join('')}</span>
-                    </div>
+                  <div className="relative inline-flex items-center justify-center w-15 h-15 rounded-full bg-gray-100 overflow-hidden">
+                    <span className="text-gray-600 text-lg font-semibold">
+                      {staff.name
+                        .split(" ")
+                        .map((word) => word[0])
+                        .join("")}
+                    </span>
+                  </div>
                 </div>
-                
+
                 <div className="justify-start">
                   <h3 className="font-semibold text-lg">{staff.name}</h3>
-                  <p className="text-sm text-gray-600"><b>Email:</b> {staff.email}</p>
-                  <p className="text-sm text-gray-600 capitalize"><b>Role:</b> {staff.role}</p>
-                </div><div></div><div></div><div></div>
+                  <p className="text-sm text-gray-600">
+                    <b>Email:</b> {staff.email}
+                  </p>
+                  <p className="text-sm text-gray-600 capitalize">
+                    <b>Role:</b> {staff.role}
+                  </p>
+                </div>
+                <div></div>
+                <div></div>
+                <div></div>
                 <div className="flex gap-2 justify-end">
-                  <Button variant="outline" size="sm" onClick={() => handleEdit(index)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(index)}
+                  >
                     Edit
                   </Button>
                   <Button

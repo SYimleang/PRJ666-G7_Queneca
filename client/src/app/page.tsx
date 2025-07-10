@@ -467,9 +467,9 @@ export default function HomePage() {
                   ))}
                 </div>
                 <p className='text-gray-600 mb-4'>
-                  "Queneca transformed our busy restaurant. No more crowded
+                  &ldquo;Queneca transformed our busy restaurant. No more crowded
                   entrance, happier customers, and our staff can focus on
-                  service."
+                  service.&ldquo;
                 </p>
                 <div className='flex items-center'>
                   <div className='w-10 h-10 bg-red-100 rounded-full flex items-center justify-center'>
@@ -496,9 +496,9 @@ export default function HomePage() {
                   ))}
                 </div>
                 <p className='text-gray-600 mb-4'>
-                  "The QR code system is genius! Customers love being able to
+                  &ldquo;The QR code system is genius! Customers love being able to
                   wait elsewhere and get notified. Increased customer
-                  satisfaction by 40%."
+                  satisfaction by 40%.&ldquo;
                 </p>
                 <div className='flex items-center'>
                   <div className='w-10 h-10 bg-red-100 rounded-full flex items-center justify-center'>
@@ -525,9 +525,9 @@ export default function HomePage() {
                   ))}
                 </div>
                 <p className='text-gray-600 mb-4'>
-                  "Setup was incredibly easy. Within an hour, we were managing
+                  &ldquo;Setup was incredibly easy. Within an hour, we were managing
                   our waitlist digitally. The analytics help us optimize our
-                  operations."
+                  operations.&ldquo;
                 </p>
                 <div className='flex items-center'>
                   <div className='w-10 h-10 bg-red-100 rounded-full flex items-center justify-center'>

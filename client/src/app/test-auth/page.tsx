@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser } from "@/context/UserContext";
+// import { useUser } from "@/context/UserContext";
 
 export default function TestAuth() {
-  const { user } = useUser();
+  // const { user } = useUser();
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
@@ -139,8 +139,8 @@ export default function TestAuth() {
         <CardContent>
           <ol className='list-decimal list-inside space-y-2'>
             <li>
-              <strong>Check if you're logged in:</strong> Click "Check Token
-              Status" above
+              <strong>Check if you&apos;re logged in:</strong> Click &quot;Check Token
+              Status&quot; above
             </li>
             <li>
               <strong>If no token found:</strong> Go to{" "}
