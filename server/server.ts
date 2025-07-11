@@ -12,6 +12,7 @@ import staffRouter from "./routes/staff";
 import termsRouter from "./routes/terms";
 import faqsRouter from "./routes/faqs";
 import reviewsRouter from "./routes/reviews";
+import waitlistRoutes from "./routes/waitlist";
 import { connectDB } from "./config/database";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/staff-mgmt", staffRouter);
 app.use("/api/terms", termsRouter);
 app.use("/api/faqs", faqsRouter);
 app.use("/api/reviews", reviewsRouter);
+app.use("/api/waitlist", waitlistRoutes);
 
 // Default Route
 app.get("/", (_req, res) => {

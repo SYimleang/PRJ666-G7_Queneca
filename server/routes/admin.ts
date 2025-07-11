@@ -3,6 +3,7 @@ import { authenticate, requireAdmin, AuthRequest } from "../middleware/auth";
 import User from "../models/User";
 import Restaurant from "../models/Restaurant";
 import Menu from "../models/Menu";
+import Waitlist from "../models/Waitlist";
 
 const router = express.Router();
 
@@ -41,10 +42,11 @@ router.get("/dashboard", authenticate, requireAdmin, (async (
       role: "staff",
     }).select("-password");
 
-    // Get waitlist data (placeholder - you may need to create a Waitlist model)
-    // For now, we'll return an empty array
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const waitlist: any[] = [];
+    // Get waitlist data
+    const waitlist = await Waitlist.find({
+      restaurantId: admin.restaurantId,
+      status: { $in: ['waiting', 'called'] }
+    }).sort({ position: 1 });
 
     // Calculate some basic stats
     const stats = {

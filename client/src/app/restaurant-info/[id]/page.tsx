@@ -7,6 +7,7 @@ import { IMenuItem } from "@/types/menu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import WaitlistManager from "@/components/WaitlistManager";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
@@ -23,6 +24,33 @@ export default function RestaurantInfoPage() {
     "Side",
   ];
   const [isValidRestaurant, setIsValidRestaurant] = useState(true);
+
+  // Helper function to check if restaurant is currently open
+  const isRestaurantOpen = (): boolean => {
+    if (!restaurant?.hours || restaurant.hours.length === 0) {
+      return true; // If no hours set, assume always open
+    }
+
+    const now = new Date();
+    const currentDay = now
+      .toLocaleDateString("en-US", { weekday: "long" })
+      .toLowerCase();
+    const currentTime = now.toTimeString().substring(0, 5); // HH:MM format
+
+    const todayHours = restaurant.hours.find(
+      (h: any) => h.day.toLowerCase() === currentDay
+    );
+    if (!todayHours) {
+      return false; // No hours for today
+    }
+
+    return (
+      todayHours.open &&
+      todayHours.close &&
+      currentTime >= todayHours.open &&
+      currentTime <= todayHours.close
+    );
+  };
 
   // Synchronously trigger 404 page
   if (!isValidRestaurant) {
@@ -67,25 +95,25 @@ export default function RestaurantInfoPage() {
   }, [id]);
 
   // If restaurant is not loaded yet, show loading state
-  if (!restaurant) return <p className="p-6">Loading...</p>;
+  if (!restaurant) return <p className='p-6'>Loading...</p>;
 
   return (
-    <div className="container mx-auto p-6">
+    <div className='container mx-auto p-6'>
       {/* Restaurant Info Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Restaurant Info</CardTitle>
+          <CardTitle className='text-2xl'>Restaurant Info</CardTitle>
         </CardHeader>
-        <CardContent className="grid xl:grid-cols-2 lg:grid-cols-2 gap-6 items-center">
+        <CardContent className='grid xl:grid-cols-2 lg:grid-cols-2 gap-6 items-center'>
           {restaurant ? (
             <>
               {/* Logo on the left */}
-              <div className="relative lg:w-full h-48 md:h-full md:w-[150px] max-h-[250px] justify-center">
+              <div className='relative lg:w-full h-48 md:h-full md:w-[150px] max-h-[250px] justify-center'>
                 <Image
                   src={src}
-                  alt="Restaurant Logo"
+                  alt='Restaurant Logo'
                   fill
-                  className="object-contain"
+                  className='object-contain'
                   onError={() => setSrc("/restaurant_logo.png")}
                 />
               </div>
@@ -93,30 +121,30 @@ export default function RestaurantInfoPage() {
               {/* Restaurant details in the middle */}
               {Array.isArray(restaurant.hours) &&
               restaurant.hours.length > 0 ? (
-                <div className="md:h-full space-y-2">
-                  <h2 className="text-2xl font-bold text-gray-800">
+                <div className='md:h-full space-y-2'>
+                  <h2 className='text-2xl font-bold text-gray-800'>
                     {restaurant.name}
                   </h2>
-                  <p className="text-gray-700">
+                  <p className='text-gray-700'>
                     {restaurant.location.address}, {restaurant.location.city},{" "}
                     {restaurant.location.region} {restaurant.location.zip}
                   </p>
-                  <p className="text-gray-700">
+                  <p className='text-gray-700'>
                     Call: {restaurant.phone.slice(0, 3)}-
                     {restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}
                   </p>
 
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                  <div className='mt-4'>
+                    <h3 className='text-lg font-semibold text-gray-800'>
                       Operating Hours
                     </h3>
-                    <ul className="mt-2 text-sm text-gray-700 divide-y">
+                    <ul className='mt-2 text-sm text-gray-700 divide-y'>
                       {restaurant.hours.map((hour) => (
                         <li
                           key={hour.day}
-                          className="flex justify-between py-1 w-72 text-gray-700"
+                          className='flex justify-between py-1 w-72 text-gray-700'
                         >
-                          <span className="font-medium">{hour.day}</span>
+                          <span className='font-medium'>{hour.day}</span>
                           <span>
                             {hour.open && hour.close
                               ? `${hour.open} - ${hour.close}`
@@ -128,25 +156,22 @@ export default function RestaurantInfoPage() {
                   </div>
                 </div>
               ) : (
-                <div className="text-gray-600 mt-4">
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                <div className='text-gray-600 mt-4'>
+                  <div className='mt-4'>
+                    <h3 className='text-lg font-semibold text-gray-800'>
                       Operating Hours
                     </h3>
-                    <p className="mb-1">Operating hours not set.</p>
+                    <p className='mb-1'>Operating hours not set.</p>
                   </div>
                 </div>
               )}
 
-              <div className="col-span-1 md:col-span-3 text-center mx-auto px-8">
-                <Button
-                  className="mt-4 bg-red-600 hover:bg-red-500 text-white px-16 py-2 rounded"
-                  onClick={() => {
-                    window.location.href = ``; // Replace with reserving URL
-                  }}
-                >
-                  Reserve Table
-                </Button>
+              <div className='col-span-1 md:col-span-3 mt-6'>
+                <WaitlistManager
+                  restaurantId={restaurant._id}
+                  restaurantName={restaurant.name}
+                  isOpen={isRestaurantOpen()}
+                />
               </div>
             </>
           ) : null}
@@ -154,9 +179,9 @@ export default function RestaurantInfoPage() {
       </Card>
       <br />
 
-      <Card className="mb-6 bg-red-100">
+      <Card className='mb-6 bg-red-100'>
         <CardHeader>
-          <CardTitle className="text-2xl text-center ">
+          <CardTitle className='text-2xl text-center '>
             Restaurant Menu
           </CardTitle>
         </CardHeader>
@@ -165,9 +190,9 @@ export default function RestaurantInfoPage() {
       {/* Menu Items */}
       {menuItems.length === 0 ? (
         // Case: No menu at all
-        <Card className="mb-6">
+        <Card className='mb-6'>
           <CardContent>
-            <p className="text-gray-500 text-center">
+            <p className='text-gray-500 text-center'>
               No menu available for this restaurant.
             </p>
           </CardContent>
@@ -179,36 +204,36 @@ export default function RestaurantInfoPage() {
           if (items.length === 0) return null;
 
           return (
-            <Card key={category} className="mb-6">
+            <Card key={category} className='mb-6'>
               <CardHeader>
-                <CardTitle className="text-2xl">{category}</CardTitle>
+                <CardTitle className='text-2xl'>{category}</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <CardContent className='grid grid-cols-1 md:grid-cols-3 gap-6 items-center'>
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className="border rounded p-4 bg-white shadow-sm"
+                    className='border rounded p-4 bg-white shadow-sm'
                   >
-                    <div className="w-full max-w-[250px] mx-auto aspect-[4/3] relative mb-2">
+                    <div className='w-full max-w-[250px] mx-auto aspect-[4/3] relative mb-2'>
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
                           alt={item.name}
                           fill
-                          className="object-cover rounded"
+                          className='object-cover rounded'
                         />
                       ) : (
-                        <div className="w-full h-full bg-gray-200 rounded mb-2 flex items-center justify-center mx-auto">
-                          <span className="text-gray-500">No Image</span>
+                        <div className='w-full h-full bg-gray-200 rounded mb-2 flex items-center justify-center mx-auto'>
+                          <span className='text-gray-500'>No Image</span>
                         </div>
                       )}
                     </div>
                     <div>
-                      <h4 className="text-xl font-semibold">{item.name}</h4>
-                      <p className="text-md text-gray-800 mb-2">
+                      <h4 className='text-xl font-semibold'>{item.name}</h4>
+                      <p className='text-md text-gray-800 mb-2'>
                         ${item.price.toFixed(2)}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className='text-sm text-gray-500'>
                         Ingredients: {item.ingredients}
                       </p>
                     </div>

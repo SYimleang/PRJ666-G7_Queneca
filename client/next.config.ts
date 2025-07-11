@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "placekitten.com" },
       { protocol: "https", hostname: "placehold.co" },
       { protocol: "https", hostname: "via.placeholder.com" },
+      { protocol: "https", hostname: "jmp.sh" },
     ],
   },
 };
