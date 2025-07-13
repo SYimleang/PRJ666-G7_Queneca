@@ -128,6 +128,11 @@ export default function AdminNav() {
             <Link href="/admin/menu-mgmt">Menu Management</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href="/admin/restaurant-reviews">Reviews</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
 
         {/* View */}
         <NavigationMenuItem>

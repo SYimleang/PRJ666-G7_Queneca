@@ -1,16 +1,50 @@
 import express, { Response, RequestHandler } from "express";
 import { authenticate, AuthRequest } from "../middleware/auth";
-import { IRestaurant } from "../models/Restaurant";
+import Restaurant, { IRestaurant } from "../models/Restaurant";
+import mongoose from "mongoose";
+import User from "../models/User";
 import Review from "../models/Review";
 
 const router = express.Router();
 
 // Get /api/reviews/restaurant/:restaurantId - Get all reviews for a restaurant
-router.get("/restaurant/:id", async (req: AuthRequest, res: Response) => {
+router.get("/restaurant", authenticate, (async (
+  req: AuthRequest,
+  res: Response
+) => {
   try {
-    const { id } = req.params;
+    const adminId = req.user?.id;
 
-    const reviews = await Review.find({ restaurantId: id })
+    console.log("Admin ID:", adminId);
+
+    // Get user to find their restaurantId
+    const user = await User.findById(adminId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.restaurantId) {
+      return res
+        .status(400)
+        .json({ message: "User must be associated with a restaurant" });
+    }
+
+    const restaurants = await Restaurant.find({
+      ownerId: new mongoose.Types.ObjectId(adminId),
+    });
+
+    // If no restaurant is found for the admin, return 404
+    if (!restaurants) {
+      return res
+        .status(404)
+        .json({ message: "No restaurants found for this admin" });
+    }
+
+    const restaurantIds = restaurants.map((r) => r._id);
+
+    console.log("Restaurant IDs:", restaurantIds);
+
+    const reviews = await Review.find({ restaurantId: { $in: restaurantIds } })
       .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
@@ -19,7 +53,7 @@ router.get("/restaurant/:id", async (req: AuthRequest, res: Response) => {
     console.error("Error fetching reviews:", error);
     res.status(500).json({ message: "Server error while fetching reviews" });
   }
-});
+}) as RequestHandler);
 
 // POST /api/reviews - Create a new review
 router.post("/", authenticate, (async (req: AuthRequest, res: Response) => {
@@ -57,36 +91,44 @@ router.post("/", authenticate, (async (req: AuthRequest, res: Response) => {
 }) as RequestHandler);
 
 // PUT /api/reviews/:reviewId/respond - Admin only
-router.put("/:reviewId/respond", authenticate, (async (req: AuthRequest, res: Response) => {
-    try {
-      const { reviewId } = req.params;
-      const { comment } = req.body;
-      const adminId = req.user?.id;
+router.put("/:reviewId/respond", authenticate, (async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const { reviewId } = req.params;
+    const { comment } = req.body;
+    const adminId = req.user?.id;
 
-      // Find the review by ID
-        const review = await Review.findById(reviewId).populate<{ restaurantId: IRestaurant }>("restaurantId");
-        if (!review) {
-          return res.status(404).json({ message: "Review not found" });
-        }
+    // Find the review by ID
+    const review = await Review.findById(reviewId).populate<{
+      restaurantId: IRestaurant;
+    }>("restaurantId");
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
 
     // Ensure the review belongs to the admin's restaurant
     if (String(review.restaurantId.ownerId) !== adminId) {
-      return res.status(403).json({ message: 'You can only respond to reviews of your own restaurant' });
+      return res.status(403).json({
+        message: "You can only respond to reviews of your own restaurant",
+      });
     }
 
-      review.response = {
-        comment,
-        createdAt: new Date(),
-      };
+    review.response = {
+      comment,
+      createdAt: new Date(),
+    };
 
-      await review.save();
+    await review.save();
 
-      res.status(200).json({ message: "Response added", review });
-    } catch (error) {
-      console.error("Error responding to review:", error);
-      res.status(500).json({ message: "Server error while responding to review" });
-    }
+    res.status(200).json({ message: "Response added", review });
+  } catch (error) {
+    console.error("Error responding to review:", error);
+    res
+      .status(500)
+      .json({ message: "Server error while responding to review" });
   }
-) as RequestHandler);
+}) as RequestHandler);
 
 export default router;
