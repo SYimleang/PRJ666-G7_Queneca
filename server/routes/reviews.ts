@@ -1,4 +1,4 @@
-import express, { Response, RequestHandler } from "express";
+import express, { Response, Request, RequestHandler } from "express";
 import { authenticate, AuthRequest } from "../middleware/auth";
 import Restaurant, { IRestaurant } from "../models/Restaurant";
 import mongoose from "mongoose";
@@ -8,6 +8,25 @@ import Review from "../models/Review";
 const router = express.Router();
 
 // Get /api/reviews/restaurant/:restaurantId - Get all reviews for a restaurant
+router.get(
+  "/restaurant/:restaurantId",
+  async (req: Request<{ restaurantId: string }>, res: Response) => {
+    try {
+      const { restaurantId } = req.params;
+
+      const reviews = await Review.find({ restaurantId })
+        .populate("userId", "name email")
+        .sort({ createdAt: -1 });
+
+      res.status(200).json({ reviews });
+    } catch (error) {
+      console.error("Error fetching customer reviews:", error);
+      res.status(500).json({ message: "Server error while fetching reviews" });
+    }
+  }
+);
+
+// Get /api/reviews/restaurant - Get all reviews for the restaurant owned by the authenticated admin
 router.get("/restaurant", authenticate, (async (
   req: AuthRequest,
   res: Response

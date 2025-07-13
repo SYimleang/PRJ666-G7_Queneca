@@ -1,13 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { IRestaurant } from "@/types/restaurant";
 import { IMenuItem } from "@/types/menu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import WaitlistManager from "@/components/WaitlistManager";
+import { Star } from "lucide-react";
+
+interface Review {
+  _id: string;
+  restaurantId: string;
+  userId: {
+    name: string;
+    email: string;
+  };
+  rating: number;
+  comment: string;
+  response?: {
+    comment: string;
+    createdAt: Date;
+  };
+  createdAt: Date;
+}
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
@@ -24,6 +40,9 @@ export default function RestaurantInfoPage() {
     "Side",
   ];
   const [isValidRestaurant, setIsValidRestaurant] = useState(true);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const reviewSectionRef = useRef<HTMLDivElement>(null);
+  const [averageRating, setAverageRating] = useState<number>(0);
 
   // Helper function to check if restaurant is currently open
   const isRestaurantOpen = (): boolean => {
@@ -38,7 +57,8 @@ export default function RestaurantInfoPage() {
     const currentTime = now.toTimeString().substring(0, 5); // HH:MM format
 
     const todayHours = restaurant.hours.find(
-      (h: any) => h.day.toLowerCase() === currentDay
+      (h: { day: string; open: string; close: string }) =>
+        h.day.toLowerCase() === currentDay
     );
     if (!todayHours) {
       return false; // No hours for today
@@ -76,7 +96,7 @@ export default function RestaurantInfoPage() {
           setSrc(data.restaurant.logoUrl);
         }
 
-        // Fetch the menu
+        // Fetch the menu items for the restaurant
         const menuRes = await fetch(
           `${apiUrl}/api/menus/restaurant/${data.restaurant._id}`
         );
@@ -84,6 +104,26 @@ export default function RestaurantInfoPage() {
         console.log("Menu Data:", menuData);
         if (menuData.menu?.menuItems) {
           setMenuItems(menuData.menu.menuItems);
+        }
+
+        // Fetch reviews for the restaurant
+        const reviewsRes = await fetch(
+          `${apiUrl}/api/reviews/restaurant/${data.restaurant._id}`
+        );
+        const reviewData = await reviewsRes.json();
+        const fetchedReviews = reviewData.reviews || [];
+        setReviews(fetchedReviews);
+
+        // Calculate average rating
+        if (fetchedReviews.length > 0) {
+          const total = fetchedReviews.reduce(
+            (sum: number, review: Review) => sum + review.rating,
+            0
+          );
+          const avg = total / fetchedReviews.length;
+          setAverageRating(avg);
+        } else {
+          setAverageRating(0);
         }
       } catch (error) {
         console.error("Error fetching restaurant data:", error);
@@ -95,25 +135,56 @@ export default function RestaurantInfoPage() {
   }, [id]);
 
   // If restaurant is not loaded yet, show loading state
-  if (!restaurant) return <p className='p-6'>Loading...</p>;
+  if (!restaurant) return <p className="p-6">Loading...</p>;
 
   return (
-    <div className='container mx-auto p-6'>
+    <div className="container mx-auto p-6">
       {/* Restaurant Info Card */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-2xl'>Restaurant Info</CardTitle>
+          <CardTitle className="text-3xl font-bold">
+            {restaurant.name}
+          </CardTitle>
+          <div className="flex items-center gap-4">
+            {/* Average Rating Stars */}
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={18}
+                    fill={i < Math.floor(averageRating) ? "#fbbf24" : "none"}
+                    stroke="#fbbf24"
+                  />
+                ))}
+                <span className="text-sm text-gray-700 font-medium">
+                  {averageRating.toFixed(1)} / 5
+                </span>
+                {/* Scroll to Reviews Button */}
+                <button
+                  className="text-blue-600 hover:text-red-500 text-sm underline"
+                  onClick={() =>
+                    reviewSectionRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  See Reviews
+                </button>
+              </div>
+            )}
+          </div>
         </CardHeader>
-        <CardContent className='grid xl:grid-cols-2 lg:grid-cols-2 gap-6 items-center'>
+        <CardContent className="grid xl:grid-cols-2 lg:grid-cols-2 gap-6 items-center">
           {restaurant ? (
             <>
               {/* Logo on the left */}
-              <div className='relative lg:w-full h-48 md:h-full md:w-[150px] max-h-[250px] justify-center'>
+              <div className="relative lg:w-full h-48 md:h-full md:w-[150px] max-h-[250px] justify-center">
                 <Image
                   src={src}
-                  alt='Restaurant Logo'
+                  alt="Restaurant Logo"
                   fill
-                  className='object-contain'
+                  className="object-contain"
                   onError={() => setSrc("/restaurant_logo.png")}
                 />
               </div>
@@ -121,30 +192,28 @@ export default function RestaurantInfoPage() {
               {/* Restaurant details in the middle */}
               {Array.isArray(restaurant.hours) &&
               restaurant.hours.length > 0 ? (
-                <div className='md:h-full space-y-2'>
-                  <h2 className='text-2xl font-bold text-gray-800'>
-                    {restaurant.name}
-                  </h2>
-                  <p className='text-gray-700'>
+                <div className="md:h-full space-y-2">
+                  <h2 className="text-xl font-bold text-gray-800">Address</h2>
+                  <p className="text-gray-700">
                     {restaurant.location.address}, {restaurant.location.city},{" "}
                     {restaurant.location.region} {restaurant.location.zip}
                   </p>
-                  <p className='text-gray-700'>
+                  <p className="text-gray-700">
                     Call: {restaurant.phone.slice(0, 3)}-
                     {restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}
                   </p>
 
-                  <div className='mt-4'>
-                    <h3 className='text-lg font-semibold text-gray-800'>
+                  <div className="mt-4">
+                    <h2 className="text-xl font-semibold text-gray-800">
                       Operating Hours
-                    </h3>
-                    <ul className='mt-2 text-sm text-gray-700 divide-y'>
+                    </h2>
+                    <ul className="mt-2 text-sm text-gray-700 divide-y">
                       {restaurant.hours.map((hour) => (
                         <li
                           key={hour.day}
-                          className='flex justify-between py-1 w-72 text-gray-700'
+                          className="flex justify-between py-1 w-72 text-gray-700"
                         >
-                          <span className='font-medium'>{hour.day}</span>
+                          <span className="font-medium">{hour.day}</span>
                           <span>
                             {hour.open && hour.close
                               ? `${hour.open} - ${hour.close}`
@@ -156,17 +225,17 @@ export default function RestaurantInfoPage() {
                   </div>
                 </div>
               ) : (
-                <div className='text-gray-600 mt-4'>
-                  <div className='mt-4'>
-                    <h3 className='text-lg font-semibold text-gray-800'>
+                <div className="text-gray-600 mt-4">
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold text-gray-800">
                       Operating Hours
                     </h3>
-                    <p className='mb-1'>Operating hours not set.</p>
+                    <p className="mb-1">Operating hours not set.</p>
                   </div>
                 </div>
               )}
 
-              <div className='col-span-1 md:col-span-3 mt-6'>
+              <div className="col-span-1 md:col-span-3 mt-6">
                 <WaitlistManager
                   restaurantId={restaurant._id}
                   restaurantName={restaurant.name}
@@ -179,9 +248,9 @@ export default function RestaurantInfoPage() {
       </Card>
       <br />
 
-      <Card className='mb-6 bg-red-100'>
+      <Card className="mb-6 bg-red-100">
         <CardHeader>
-          <CardTitle className='text-2xl text-center '>
+          <CardTitle className="text-2xl text-center ">
             Restaurant Menu
           </CardTitle>
         </CardHeader>
@@ -190,9 +259,9 @@ export default function RestaurantInfoPage() {
       {/* Menu Items */}
       {menuItems.length === 0 ? (
         // Case: No menu at all
-        <Card className='mb-6'>
+        <Card className="mb-6">
           <CardContent>
-            <p className='text-gray-500 text-center'>
+            <p className="text-gray-500 text-center">
               No menu available for this restaurant.
             </p>
           </CardContent>
@@ -204,36 +273,36 @@ export default function RestaurantInfoPage() {
           if (items.length === 0) return null;
 
           return (
-            <Card key={category} className='mb-6'>
+            <Card key={category} className="mb-6">
               <CardHeader>
-                <CardTitle className='text-2xl'>{category}</CardTitle>
+                <CardTitle className="text-2xl">{category}</CardTitle>
               </CardHeader>
-              <CardContent className='grid grid-cols-1 md:grid-cols-3 gap-6 items-center'>
+              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className='border rounded p-4 bg-white shadow-sm'
+                    className="border rounded p-4 bg-white shadow-sm"
                   >
-                    <div className='w-full max-w-[250px] mx-auto aspect-[4/3] relative mb-2'>
+                    <div className="w-full max-w-[250px] mx-auto aspect-[4/3] relative mb-2">
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
                           alt={item.name}
                           fill
-                          className='object-cover rounded'
+                          className="object-cover rounded"
                         />
                       ) : (
-                        <div className='w-full h-full bg-gray-200 rounded mb-2 flex items-center justify-center mx-auto'>
-                          <span className='text-gray-500'>No Image</span>
+                        <div className="w-full h-full bg-gray-200 rounded mb-2 flex items-center justify-center mx-auto">
+                          <span className="text-gray-500">No Image</span>
                         </div>
                       )}
                     </div>
                     <div>
-                      <h4 className='text-xl font-semibold'>{item.name}</h4>
-                      <p className='text-md text-gray-800 mb-2'>
+                      <h4 className="text-xl font-semibold">{item.name}</h4>
+                      <p className="text-md text-gray-800 mb-2">
                         ${item.price.toFixed(2)}
                       </p>
-                      <p className='text-sm text-gray-500'>
+                      <p className="text-sm text-gray-500">
                         Ingredients: {item.ingredients}
                       </p>
                     </div>
@@ -244,6 +313,58 @@ export default function RestaurantInfoPage() {
           );
         })
       )}
+
+      {/* Reviews Section */}
+      <Card ref={reviewSectionRef} className="mt-10">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Customer Reviews</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {reviews.length === 0 ? (
+            <p className="text-gray-500">No reviews yet.</p>
+          ) : (
+            reviews.map((review) => (
+              <div key={review._id} className="border-b pb-4">
+                <div>
+                  <p className="font-medium">
+                    {review.userId?.name || "Anonymous"} -{" "}
+                    <span className="text-sm text-gray-500">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </span>
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {review.userId?.email}
+                  </p>
+                </div>
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={16}
+                      fill={i < review.rating ? "#fbbf24" : "none"}
+                      stroke="#fbbf24"
+                    />
+                  ))}
+                </div>
+                <p className="mt-2">{review.comment}</p>
+                {review.response && (
+                  <div className="mt-2 p-2 rounded bg-gray-100">
+                    <p className="text-sm font-semibold text-gray-700">
+                      Owner’s Response:
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {review.response.comment}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {new Date(review.response.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
