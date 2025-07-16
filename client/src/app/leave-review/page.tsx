@@ -111,7 +111,7 @@ export default function LeaveReviewPage() {
 
               <button
                 onClick={handleSubmit}
-                disabled={submitting || !rating || !comment}
+                disabled={submitting || !rating}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
               >
                 {submitting ? "Submitting..." : "Submit Review"}
