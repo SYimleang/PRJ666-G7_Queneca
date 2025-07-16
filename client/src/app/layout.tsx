@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { UserProvider } from "../context/UserContext";
 import { RestaurantProvider } from "../context/RestaurantContext";
+import { GameProvider } from "../context/GameContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,9 +23,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <UserProvider>
           <RestaurantProvider>
-            <Navbar />
-            <main className="pt-4 px-2">{children}</main>
-            <Footer />
+            <GameProvider>
+              <Navbar />
+              <main className="pt-4 px-2">{children}</main>
+              <Footer />
+            </GameProvider>
           </RestaurantProvider>
         </UserProvider>
       </body>
