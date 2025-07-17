@@ -60,19 +60,19 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className='container mx-auto p-6'>
+    <div className="container mx-auto p-6">
       {/* Custom Navbar Slot */}
       <AdminNav></AdminNav>
-      <Separator className='mt-5 mb-5' />
-      <div className='flex justify-between items-center'>
+      <Separator className="mt-5 mb-5" />
+      <div className="flex justify-between items-center">
         {user ? (
-          <h1 className='mb-5 text-2xl font-bold'>
+          <h1 className="mb-5 text-2xl font-bold">
             {user.name}&apos;s Admin Dashboard
           </h1>
         ) : (
-          <h1 className='text-2xl font-bold'>Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         )}
-        <div className='space-x-2'></div>
+        <div className="space-x-2"></div>
       </div>
 
       {/* Restaurant Overview */}
@@ -80,43 +80,47 @@ export default function AdminDashboardPage() {
         <CardHeader>
           <CardTitle>Restaurant Info</CardTitle>
         </CardHeader>
-        <CardContent className='grid grid-cols-1 md:grid-cols-3 gap-6 items-start'>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {restaurant ? (
             <>
               {/* Logo on the left */}
-              <div className='relative w-full h-48 md:h-full max-h-[250px]'>
+              <div className="relative w-full h-48 md:h-full max-h-[250px]">
                 <Image
                   src={src}
-                  alt='Restaurant Logo'
+                  alt="Restaurant Logo"
                   fill
-                  className='object-contain rounded shadow'
+                  className="object-contain rounded shadow"
                   onError={() => setSrc("/restaurant_logo.png")}
                 />
               </div>
 
               {Array.isArray(restaurant.hours) &&
               restaurant.hours.length > 0 ? (
-                <div className='space-y-2'>
-                  <h2 className='text-2xl font-bold text-gray-800'>
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold text-gray-800">
                     {restaurant.name}
                   </h2>
-                  <p className='text-gray-700'>{restaurant.phone}</p>
-                  <p className='text-gray-700'>
+
+                  <p className="text-gray-700">
+                    {restaurant.phone.slice(0, 3)}-
+                    {restaurant.phone.slice(3, 6)}-{restaurant.phone.slice(6)}
+                  </p>
+                  <p className="text-gray-700">
                     {restaurant.location.address}, {restaurant.location.city},{" "}
                     {restaurant.location.region} {restaurant.location.zip}
                   </p>
 
-                  <div className='mt-4'>
-                    <h3 className='text-lg font-semibold text-gray-800'>
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold text-gray-800">
                       Operating Hours
                     </h3>
-                    <ul className='mt-2 text-sm text-gray-700 divide-y'>
+                    <ul className="mt-2 text-sm text-gray-700 divide-y">
                       {restaurant.hours.map((hour) => (
                         <li
                           key={hour.day}
-                          className='flex justify-between py-1 w-72 text-gray-700'
+                          className="flex justify-between py-1 w-72 text-gray-700"
                         >
-                          <span className='font-medium'>{hour.day}</span>
+                          <span className="font-medium">{hour.day}</span>
                           <span>
                             {hour.open && hour.close
                               ? `${hour.open} - ${hour.close}`
@@ -128,15 +132,15 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
               ) : (
-                <div className='text-gray-600 mt-4'>
-                  <div className='mt-4'>
-                    <h3 className='text-lg font-semibold text-gray-800'>
+                <div className="text-gray-600 mt-4">
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold text-gray-800">
                       Operating Hours
                     </h3>
-                    <p className='mb-1'>Operating hours not set.</p>
+                    <p className="mb-1">Operating hours not set.</p>
                     <Link
-                      href='/admin/restaurant-config'
-                      className='inline-block text-sm text-red-600 underline hover:text-red-800'
+                      href="/admin/restaurant-config"
+                      className="inline-block text-sm text-red-600 underline hover:text-red-800"
                     >
                       Set hours here
                     </Link>
@@ -145,19 +149,19 @@ export default function AdminDashboardPage() {
               )}
 
               {/* QR Code on the right */}
-              <div className='flex flex-col items-center justify-center border rounded-lg p-4 bg-gray-50'>
+              <div className="flex flex-col items-center justify-center border rounded-lg p-4 bg-gray-50">
                 {restaurant.qrCode && (
                   <Image
                     src={restaurant.qrCode}
-                    alt='QR Code'
+                    alt="QR Code"
                     width={200}
                     height={200}
-                    className='mb-4'
+                    className="mb-4"
                   />
                 )}
                 <Button
                   onClick={printQRCode}
-                  className='w-full bg-red-500 hover:bg-red-600 text-white'
+                  className="w-full bg-red-500 hover:bg-red-600 text-white"
                 >
                   Print QR Code
                 </Button>
@@ -171,7 +175,7 @@ export default function AdminDashboardPage() {
       <WaitlistSummary />
 
       {/* Waitlist Management Table */}
-      <div className='mt-6'>
+      <div className="mt-6">
         <WaitlistTable />
       </div>
     </div>
