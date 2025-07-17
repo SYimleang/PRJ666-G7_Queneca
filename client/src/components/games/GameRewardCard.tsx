@@ -21,6 +21,9 @@ export const GameRewardCard = ({ discount, code, timestamp }: Props) => {
         </div>
         <div className="text-sm font-mono text-gray-600">Code: {code}</div>
         <div className="text-xs text-gray-500">Generated on: {timestamp}</div>
+        <div className="text-xs italic text-gray-400">
+          *Only one discount applicable per meal*
+        </div>
         <div className="text-xs italic text-gray-400">*Valid today only</div>
       </CardContent>
     </Card>
