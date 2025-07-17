@@ -141,7 +141,9 @@ export default function AdminNav() {
             <ul className="grid w-[200px] gap-4">
               <li>
                 <NavigationMenuLink asChild>
-                  <Link href="/customer">Customer</Link>
+                  <Link href={`/restaurant/${restaurant?._id ?? ""}`}>
+                    Customer
+                  </Link>
                 </NavigationMenuLink>
                 <NavigationMenuLink asChild>
                   <Link href="/staff">Staff</Link>
