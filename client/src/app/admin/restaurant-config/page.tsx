@@ -64,6 +64,7 @@ export default function RestaurantSettingsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
   const form = useForm<FormValues>({
@@ -144,8 +145,10 @@ export default function RestaurantSettingsPage() {
   const onSubmit = async (data: FormValues) => {
     console.log("Submitted:", data);
     try {
+      setSaving(true);
       setError(null);
       setSuccess(null);
+
       const restaurantId = user?.restaurantId;
       const token = user?.token;
 
@@ -191,6 +194,8 @@ export default function RestaurantSettingsPage() {
           ? err.message
           : "Failed to update restaurant config",
       );
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -386,8 +391,12 @@ export default function RestaurantSettingsPage() {
                   <Button onClick={router.back} type="reset" variant="outline">
                     Cancel
                   </Button>
-                  <Button className="bg-red-500 hover:bg-red-600" type="submit">
-                    Save Settings
+                  <Button
+                    disabled={saving}
+                    className="bg-red-500 hover:bg-red-600"
+                    type="submit"
+                  >
+                    {saving ? "Saving..." : "Save Settings"}
                   </Button>
                 </div>
               </form>
