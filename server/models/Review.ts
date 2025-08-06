@@ -36,14 +36,12 @@ const reviewSchema = new Schema<IReview>(
       trim: true,
     },
     response: {
-      comment: {
-        type: String,
-        trim: true,
+      type: {
+        comment: { type: String, trim: true, required: true },
+        createdAt: { type: Date, default: Date.now },
       },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
+      required: false,
+      default: undefined,
     },
   },
   { timestamps: true }

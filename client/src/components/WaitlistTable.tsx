@@ -3,13 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useUser } from "@/context/UserContext";
 import { useRestaurant } from "@/context/RestaurantContext";
+import TooltipWrapper from "./TooltipWrapper";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 interface WaitlistEntry {
   id: string;
+  customerId: string;
   customerName: string;
   customerPhone: string;
   partySize: number;
@@ -17,7 +20,13 @@ interface WaitlistEntry {
   position: number;
   estimatedWaitTime: number;
   joinedAt: string;
-  status: "waiting" | "called" | "seated" | "cancelled" | "no-show";
+  status:
+    | "waiting"
+    | "called"
+    | "seated"
+    | "cancelled"
+    | "no-show"
+    | "completed";
   calledAt?: string;
 }
 
@@ -27,14 +36,26 @@ interface WaitlistSettings {
   isEnabled: boolean;
 }
 
+type VisitEntry = {
+  date: string;
+  partySize: number;
+  notes?: string;
+  stars?: number;
+  message?: string;
+};
+
 export default function WaitlistTable() {
   const { user } = useUser();
   const { restaurant } = useRestaurant();
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([]);
+  const [filteredWaitlist, setFilteredWaitlist] = useState<WaitlistEntry[]>([]);
   const [settings, setSettings] = useState<WaitlistSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [actionLoading, setActionLoading] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  type VisitHistory = VisitEntry[];
 
   // Fetch waitlist data
   const fetchWaitlist = async () => {
@@ -53,7 +74,9 @@ export default function WaitlistTable() {
 
       if (response.ok) {
         const data = await response.json();
-        setWaitlist(data.waitlist || []);
+        const waitlistData = data.waitlist || [];
+        setWaitlist(waitlistData);
+        setFilteredWaitlist(waitlistData);
         setSettings(data.settings || null);
         setError("");
       } else {
@@ -76,6 +99,20 @@ export default function WaitlistTable() {
       return () => clearInterval(interval);
     }
   }, [user, restaurant]);
+
+  // Filter waitlist based on search term
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredWaitlist(waitlist);
+    } else {
+      const filtered = waitlist.filter(
+        (entry) =>
+          entry.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          entry.customerPhone.includes(searchTerm)
+      );
+      setFilteredWaitlist(filtered);
+    }
+  }, [searchTerm, waitlist]);
 
   // Call customer
   const callCustomer = async (entryId: string) => {
@@ -168,6 +205,48 @@ export default function WaitlistTable() {
     }
   };
 
+  // Remove customer from waitlist
+  const removeCustomer = async (entryId: string) => {
+    if (!user) return;
+
+    if (
+      !confirm(
+        "Are you sure you want to remove this customer from the waitlist?"
+      )
+    ) {
+      return;
+    }
+
+    setActionLoading(entryId);
+    try {
+      const response = await fetch(
+        `${apiUrl}/api/waitlist/admin/remove/${entryId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reason: "Removed by admin",
+          }),
+        }
+      );
+
+      if (response.ok) {
+        await fetchWaitlist(); // Refresh the list
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to remove customer");
+      }
+    } catch (err) {
+      console.error("Error removing customer:", err);
+      setError("Failed to remove customer");
+    } finally {
+      setActionLoading("");
+    }
+  };
+
   const formatWaitTime = (minutes: number): string => {
     if (minutes < 60) return `${minutes}m`;
     const hours = Math.floor(minutes / 60);
@@ -218,6 +297,8 @@ export default function WaitlistTable() {
         return "Cancelled";
       case "no-show":
         return "No Show";
+      case "completed":
+        return "Completed";
       default:
         return status;
     }
@@ -235,20 +316,37 @@ export default function WaitlistTable() {
 
   return (
     <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle className='text-xl'>Waitlist Management</CardTitle>
+      <CardHeader className='space-y-4'>
+        <div className='flex flex-row items-center justify-between'>
+          <CardTitle className='text-xl'>Waitlist Management</CardTitle>
+          <div className='flex items-center gap-4'>
+            <Button
+              onClick={fetchWaitlist}
+              disabled={loading}
+              variant='outline'
+              size='sm'
+            >
+              {loading ? "Refreshing..." : "Refresh"}
+            </Button>
+            {settings && (
+              <div className='text-sm text-gray-600'>
+                {waitlist.length} / {settings.maxCapacity} capacity
+              </div>
+            )}
+          </div>
+        </div>
         <div className='flex items-center gap-4'>
-          <Button
-            onClick={fetchWaitlist}
-            disabled={loading}
-            variant='outline'
-            size='sm'
-          >
-            {loading ? "Refreshing..." : "Refresh"}
-          </Button>
-          {settings && (
+          <div className='flex-1 max-w-md'>
+            <Input
+              placeholder='Search by customer name or phone...'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className='w-full'
+            />
+          </div>
+          {filteredWaitlist.length !== waitlist.length && (
             <div className='text-sm text-gray-600'>
-              {waitlist.length} / {settings.maxCapacity} capacity
+              Showing {filteredWaitlist.length} of {waitlist.length} customers
             </div>
           )}
         </div>
@@ -268,6 +366,10 @@ export default function WaitlistTable() {
           <div className='text-center py-8'>
             <p className='text-gray-600'>No customers in waitlist</p>
           </div>
+        ) : filteredWaitlist.length === 0 ? (
+          <div className='text-center py-8'>
+            <p className='text-gray-600'>No customers match your search</p>
+          </div>
         ) : (
           <div className='overflow-x-auto'>
             <table className='w-full border-collapse'>
@@ -283,7 +385,7 @@ export default function WaitlistTable() {
                 </tr>
               </thead>
               <tbody>
-                {waitlist.map((entry, index) => (
+                {filteredWaitlist.map((entry, index) => (
                   <tr
                     key={entry.id}
                     className={`border-b border-gray-100 hover:bg-gray-50 ${
@@ -296,8 +398,16 @@ export default function WaitlistTable() {
                       </span>
                     </td>
                     <td className='p-3'>
+                      <TooltipWrapper
+                        customerId={entry.customerId}
+                        apiToken={user.token}
+                        renderContent={renderHistory}
+                      >
+                        <p className='font-medium cursor-pointer underline underline-offset-2 text-blue-600 hover:text-blue-800'>
+                          {entry.customerName}
+                        </p>
+                      </TooltipWrapper>
                       <div>
-                        <p className='font-medium'>{entry.customerName}</p>
                         <p className='text-sm text-gray-600'>
                           {formatPhone(entry.customerPhone)}
                         </p>
@@ -338,16 +448,27 @@ export default function WaitlistTable() {
                       </span>
                     </td>
                     <td className='p-3'>
-                      <div className='flex gap-2'>
+                      <div className='flex gap-2 flex-wrap'>
                         {entry.status === "waiting" && (
-                          <Button
-                            onClick={() => callCustomer(entry.id)}
-                            disabled={actionLoading === entry.id}
-                            size='sm'
-                            className='bg-green-600 hover:bg-green-700 text-white'
-                          >
-                            {actionLoading === entry.id ? "..." : "Call"}
-                          </Button>
+                          <>
+                            <Button
+                              onClick={() => callCustomer(entry.id)}
+                              disabled={actionLoading === entry.id}
+                              size='sm'
+                              className='bg-green-600 hover:bg-green-700 text-white'
+                            >
+                              {actionLoading === entry.id ? "..." : "Call"}
+                            </Button>
+                            <Button
+                              onClick={() => removeCustomer(entry.id)}
+                              disabled={actionLoading === entry.id}
+                              size='sm'
+                              variant='outline'
+                              className='border-red-300 text-red-600 hover:bg-red-50'
+                            >
+                              {actionLoading === entry.id ? "..." : "Remove"}
+                            </Button>
+                          </>
                         )}
                         {entry.status === "called" && (
                           <>
@@ -367,6 +488,15 @@ export default function WaitlistTable() {
                               className='border-orange-300 text-orange-600 hover:bg-orange-50'
                             >
                               {actionLoading === entry.id ? "..." : "No Show"}
+                            </Button>
+                            <Button
+                              onClick={() => removeCustomer(entry.id)}
+                              disabled={actionLoading === entry.id}
+                              size='sm'
+                              variant='outline'
+                              className='border-red-300 text-red-600 hover:bg-red-50'
+                            >
+                              {actionLoading === entry.id ? "..." : "Remove"}
                             </Button>
                           </>
                         )}
@@ -390,12 +520,53 @@ export default function WaitlistTable() {
               waitlist)
             </li>
             <li>
-              • <strong>No Show:</strong> Mark customer as no-show if they don't
-              arrive
+              • <strong>No Show:</strong> Mark customer as no-show if they
+              don&apos;t arrive
+            </li>
+            <li>
+              • <strong>Remove:</strong> Remove customer from waitlist entirely
             </li>
           </ul>
         </div>
       </CardContent>
     </Card>
   );
+
+  function renderHistory(history: VisitHistory) {
+    const { waitlistHistory, reviews } = history;
+
+    if (!history || history.length === 0) {
+      return <p className='text-sm text-gray-500'>No visit history found.</p>;
+    }
+
+    return (
+      <div className='space-y-2 text-sm'>
+        <p className='font-semibold'>Visited:</p>
+        {waitlistHistory.map((visit, i) => (
+          <div key={visit.id} className='border-b pb-1 last:border-none'>
+            <p>
+              {new Date(visit.joinedAt).toLocaleDateString()} — Party of{" "}
+              {visit.partySize}
+            </p>
+            {visit.notes && (
+              <p className='text-xs text-gray-500'>Note: {visit.notes}</p>
+            )}
+          </div>
+        ))}
+        {reviews.length > 0 && (
+          <div className='pt-2'>
+            <p className='font-semibold'>Reviews:</p>
+            {reviews.map((r) => (
+              <div key={r.id} className='text-yellow-600 text-sm'>
+                ⭐ {r.rating}/5 {r.comment && <span>— {r.comment}</span>}
+              </div>
+            ))}
+          </div>
+        )}
+        {waitlistHistory.length === 0 && reviews.length === 0 && (
+          <p className='text-gray-400 italic'>No history available.</p>
+        )}
+      </div>
+    );
+  }
 }

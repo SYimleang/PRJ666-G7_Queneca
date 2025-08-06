@@ -128,6 +128,17 @@ export default function AdminNav() {
             <Link href="/admin/menu-mgmt">Menu Management</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        {/* Table Management */}
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href="/admin/table-mgmt">Table Management</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href="/admin/restaurant-reviews">Reviews</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
 
         {/* View */}
         <NavigationMenuItem>
@@ -136,7 +147,9 @@ export default function AdminNav() {
             <ul className="grid w-[200px] gap-4">
               <li>
                 <NavigationMenuLink asChild>
-                  <Link href="/customer">Customer</Link>
+                  <Link href={`/restaurant/${restaurant?._id ?? ""}`}>
+                    Customer
+                  </Link>
                 </NavigationMenuLink>
                 <NavigationMenuLink asChild>
                   <Link href="/staff">Staff</Link>

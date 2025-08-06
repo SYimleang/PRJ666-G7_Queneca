@@ -4,7 +4,11 @@ import { useUser } from "@/context/UserContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user, loading } = useUser();
   const router = useRouter();
 
@@ -13,15 +17,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     // Not logged in
     if (!user) {
-      router.replace("/login");
-    } 
+      router.replace("/auth?mode=login");
+    }
     // Staff
     else if (user.role == "staff") {
       router.replace("/staff");
-    } 
+    }
     // Customer
     else if (user.role == "customer") {
-        router.replace("/");
+      router.replace("/");
     }
   }, [user, loading, router]);
 
