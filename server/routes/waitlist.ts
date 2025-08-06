@@ -7,6 +7,7 @@ import {
 import Waitlist from "../models/Waitlist";
 import Restaurant from "../models/Restaurant";
 import User from "../models/User";
+import Review from "../models/Review";
 
 const router = express.Router();
 
@@ -58,6 +59,16 @@ const updatePositions = async (restaurantId: string) => {
       await entry.save();
     }
   }
+};
+
+// Helper function to get the latest restaurant for a customer
+const getCustomerLatestRestaurant = async (
+  customerId: string
+): Promise<string | null> => {
+  const latestEntry = await Waitlist.findOne({ customerId }).sort({
+    joinedAt: -1,
+  });
+  return latestEntry ? latestEntry.restaurantId.toString() : null;
 };
 
 // POST /api/waitlist/join/:restaurantId - Join waitlist
@@ -170,7 +181,7 @@ router.get("/status/:restaurantId", authenticate, (async (
     const waitlistEntry = await Waitlist.findOne({
       restaurantId,
       customerId,
-      status: { $in: ["waiting", "called"] },
+      status: { $in: ["waiting", "called", "seated"] },
     }).populate("restaurantId", "name");
 
     if (!waitlistEntry) {
@@ -326,7 +337,7 @@ router.get(
 
       const waitlist = await Waitlist.find({
         restaurantId,
-        status: { $in: ["waiting", "called"] },
+        status: { $in: ["waiting", "called", "seated"] },
       }).sort({ position: 1 });
 
       const restaurant = await Restaurant.findById(restaurantId);
@@ -334,6 +345,7 @@ router.get(
       res.json({
         waitlist: waitlist.map((entry) => ({
           id: entry._id,
+          customerId: entry.customerId,
           customerName: entry.customerName,
           customerPhone: entry.customerPhone,
           partySize: entry.partySize,
@@ -418,6 +430,12 @@ router.put("/seat/:id", authenticate, requireAdminOrStaff, (async (
       return res.status(403).json({ message: "Access denied" });
     }
 
+    if (waitlistEntry.status === "completed") {
+      waitlistEntry.completedAt = new Date();
+      await waitlistEntry.save();
+      return res.json({ message: "Customer has already been seated" });
+    }
+
     if (waitlistEntry.status !== "called") {
       return res
         .status(400)
@@ -463,11 +481,9 @@ router.put("/no-show/:id", authenticate, requireAdminOrStaff, (async (
     }
 
     if (waitlistEntry.status !== "called") {
-      return res
-        .status(400)
-        .json({
-          message: "Customer must be called before being marked as no-show",
-        });
+      return res.status(400).json({
+        message: "Customer must be called before being marked as no-show",
+      });
     }
 
     waitlistEntry.status = "no-show";
@@ -483,6 +499,67 @@ router.put("/no-show/:id", authenticate, requireAdminOrStaff, (async (
     res
       .status(500)
       .json({ message: "Server error while marking customer as no-show" });
+  }
+}) as RequestHandler);
+
+// GET /api/waitlist/history/:userId - Get customer's waitlist history
+router.get("/history/:customerId", authenticate, requireAdminOrStaff, (async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const { customerId } = req.params;
+    const staff = await User.findById(req.user!.id);
+    console.log("Fetching history for customer:", customerId);
+
+    if (!staff) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Only allow access to customers in the same restaurant (if staff, not admin)
+    if (
+      staff.role !== "admin" &&
+      staff.restaurantId?.toString() !==
+        (await getCustomerLatestRestaurant(customerId))
+    ) {
+      return res.status(403).json({
+        message: "You do not have permission to view this customer's history",
+      });
+    }
+
+    const waitlistHistory = await Waitlist.find({ customerId }).sort({
+      joinedAt: -1,
+    });
+    console.log("Waitlist history entries found:", waitlistHistory);
+
+    const reviews = await Review.find({
+      restaurantId: staff.restaurantId,
+      userId: customerId,
+    }).sort({ createdAt: -1 });
+
+    console.log("Reviews found:", reviews);
+    res.json({
+      waitlistHistory: waitlistHistory.map((entry) => ({
+        id: entry._id,
+        restaurantId: entry.restaurantId,
+        partySize: entry.partySize,
+        joinedAt: entry.joinedAt,
+        status: entry.status,
+        seatedAt: entry.seatedAt,
+        noShowAt: entry.noShowAt,
+        cancelledAt: entry.cancelledAt,
+        notes: entry.notes,
+      })),
+      reviews: reviews.map((review) => ({
+        id: review._id,
+        restaurantId: review.restaurantId,
+        rating: review.rating,
+        comment: review.comment,
+      })),
+    });
+  } catch (error) {
+    console.error("Error fetching customer history:", error);
+    res.status(500).json({ message: "Server error fetching customer history" });
   }
 }) as RequestHandler);
 

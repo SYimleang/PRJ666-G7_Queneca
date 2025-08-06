@@ -7,23 +7,41 @@ import {
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"; // <-- Ensure this is installed
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface Visit {
-  date: string;
+interface WaitlistVisit {
+  id: string;
+  restaurantId: string;
   partySize: number;
+  joinedAt: string;
+  status: string;
+  seatedAt?: string;
+  noShowAt?: string;
+  cancelledAt?: string;
   notes?: string;
-  stars?: number;
-  message?: string;
+}
+
+interface Review {
+  id: string;
+  restaurantId: string;
+  rating: number;
+  comment?: string;
+}
+
+interface CustomerHistory {
+  waitlistHistory: WaitlistVisit[];
+  reviews: Review[];
 }
 
 interface Props {
   customerId: string;
   children: React.ReactNode;
   apiToken: string;
-  renderContent?: (history: Visit[]) => React.ReactNode;
+  renderContent?: (history: CustomerHistory) => React.ReactNode;
 }
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 export default function TooltipWrapper({
   customerId,
@@ -34,26 +52,26 @@ export default function TooltipWrapper({
   const [history, setHistory] = useState<Visit[] | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Prefetch optional
-  }, []);
-
   const fetchHistory = async () => {
     if (history || loading) return; // prevent re-fetching
     setLoading(true);
     try {
-      const res = await fetch(`/api/history/customer/${customerId}`, {
+      const res = await fetch(`${apiUrl}/api/waitlist/history/${customerId}`, {
         headers: { Authorization: `Bearer ${apiToken}` },
       });
       if (res.ok) {
         const data = await res.json();
-        setHistory(data.history || []);
+        console.log("Fetched visit history:", data);
+        setHistory({
+            waitlistHistory: data.waitlistHistory || [],
+            reviews: data.reviews || [],
+        });
       } else {
-        setHistory([]);
+        setHistory({ waitlistHistory: [], reviews: [] });
       }
     } catch (err) {
       console.error(err);
-      setHistory([]);
+      setHistory({ waitlistHistory: [], reviews: [] });
     } finally {
       setLoading(false);
     }

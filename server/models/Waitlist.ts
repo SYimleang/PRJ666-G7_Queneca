@@ -8,7 +8,13 @@ export interface IWaitlist extends Document {
   customerEmail: string;
   partySize: number;
   notes?: string;
-  status: "waiting" | "called" | "seated" | "cancelled" | "no-show";
+  status:
+    | "waiting"
+    | "called"
+    | "seated"
+    | "cancelled"
+    | "no-show"
+    | "completed";
   position: number;
   estimatedWaitTime: number; // in minutes
   joinedAt: Date;
@@ -16,6 +22,7 @@ export interface IWaitlist extends Document {
   seatedAt?: Date;
   cancelledAt?: Date;
   noShowAt?: Date;
+  completedAt?: Date;
   cancellationReason?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -56,6 +63,7 @@ const waitlistSchema = new Schema<IWaitlist>(
     cancelledAt: { type: Date },
     noShowAt: { type: Date },
     cancellationReason: { type: String },
+    completedAt: { type: Date },
   },
   { timestamps: true }
 );

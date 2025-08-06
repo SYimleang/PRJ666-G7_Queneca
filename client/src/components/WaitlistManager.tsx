@@ -20,7 +20,13 @@ interface WaitlistEntry {
   partySize: number;
   notes?: string;
   joinedAt: string;
-  status: "waiting" | "called" | "seated" | "cancelled" | "no-show";
+  status:
+    | "waiting"
+    | "called"
+    | "seated"
+    | "cancelled"
+    | "no-show"
+    | "completed";
   calledAt?: string;
 }
 
@@ -38,7 +44,7 @@ export default function WaitlistManager({
   const { user } = useUser();
   const router = useRouter();
   const [waitlistEntry, setWaitlistEntry] = useState<WaitlistEntry | null>(
-    null,
+    null
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
@@ -65,7 +71,9 @@ export default function WaitlistManager({
   useEffect(() => {
     if (
       waitlistEntry &&
-      (waitlistEntry.status === "waiting" || waitlistEntry.status === "called")
+      (waitlistEntry.status === "waiting" ||
+        waitlistEntry.status === "called" ||
+        waitlistEntry.status === "seated")
     ) {
       // Poll every 30 seconds for real-time updates
       pollInterval.current = setInterval(() => {
@@ -98,7 +106,7 @@ export default function WaitlistManager({
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
-        },
+        }
       );
 
       if (response.ok) {
@@ -151,7 +159,7 @@ export default function WaitlistManager({
             partySize,
             notes: notes.trim() || undefined,
           }),
-        },
+        }
       );
 
       const data = await response.json();
@@ -200,7 +208,7 @@ export default function WaitlistManager({
           body: JSON.stringify({
             reason: "Customer cancelled",
           }),
-        },
+        }
       );
 
       if (response.ok) {
@@ -287,7 +295,9 @@ export default function WaitlistManager({
   // Show current waitlist status if user has an active entry
   if (
     waitlistEntry &&
-    (waitlistEntry.status === "waiting" || waitlistEntry.status === "called")
+    (waitlistEntry.status === "waiting" ||
+      waitlistEntry.status === "called" ||
+      waitlistEntry.status === "seated")
   ) {
     return (
       <Card className="border-blue-200 bg-blue-50">
@@ -320,7 +330,9 @@ export default function WaitlistManager({
               <div className="flex justify-between items-center">
                 <span className="font-medium">Status:</span>
                 <span
-                  className={`text-lg font-semibold ${getStatusColor(waitlistEntry.status)}`}
+                  className={`text-lg font-semibold ${getStatusColor(
+                    waitlistEntry.status
+                  )}`}
                 >
                   {getStatusMessage(waitlistEntry.status)}
                 </span>
@@ -360,32 +372,45 @@ export default function WaitlistManager({
             </div>
           )}
 
-          <div className="flex gap-3 pt-4">
+          {waitlistEntry.status === "seated" ? (
             <Button
-              onClick={cancelWaitlist}
+              onClick={() =>
+                router.push(`/leave-review?restaurantId=${restaurantId}`)
+              }
               disabled={loading}
               variant="outline"
-              className="border-red-300 text-red-600 hover:bg-red-50"
+              className="border-green-600 text-green-800 hover:bg-green-50"
             >
-              {loading ? "Cancelling..." : "Cancel Reservation"}
+              Give us a review
             </Button>
-            <Button
-              onClick={() => checkWaitlistStatus()}
-              disabled={loading}
-              variant="outline"
-              className="border-blue-300 text-blue-600 hover:bg-blue-50"
-            >
-              Refresh Status
-            </Button>
-            <Button
-              onClick={() => playRandomGame()}
-              disabled={loading}
-              variant="outline"
-              className="border-green-300 text-green-600 hover:bg-green-50"
-            >
-              Earn Rewards
-            </Button>
-          </div>
+          ) : (
+            <div className="flex gap-3 pt-4">
+              <Button
+                onClick={cancelWaitlist}
+                disabled={loading}
+                variant="outline"
+                className="border-red-300 text-red-600 hover:bg-red-50"
+              >
+                {loading ? "Cancelling..." : "Cancel Reservation"}
+              </Button>
+              <Button
+                onClick={() => checkWaitlistStatus()}
+                disabled={loading}
+                variant="outline"
+                className="border-blue-300 text-blue-600 hover:bg-blue-50"
+              >
+                Refresh Status
+              </Button>
+              <Button
+                onClick={() => playRandomGame()}
+                disabled={loading}
+                variant="outline"
+                className="border-green-300 text-green-600 hover:bg-green-50"
+              >
+                Earn Rewards
+              </Button>
+            </div>
+          )}
 
           {error && (
             <div className="p-3 bg-red-100 border border-red-300 rounded-lg">
