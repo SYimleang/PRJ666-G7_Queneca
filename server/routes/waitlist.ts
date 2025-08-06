@@ -563,4 +563,54 @@ router.get("/history/:customerId", authenticate, requireAdminOrStaff, (async (
   }
 }) as RequestHandler);
 
+// DELETE /api/waitlist/admin/remove/:id - Remove customer from waitlist (Admin/Staff)
+router.delete("/admin/remove/:id", authenticate, requireAdminOrStaff, (async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+    const userId = req.user!.id;
+
+    const waitlistEntry = await Waitlist.findById(id);
+    if (!waitlistEntry) {
+      return res.status(404).json({ message: "Waitlist entry not found" });
+    }
+
+    // Verify user has access to this restaurant
+    const user = await User.findById(userId);
+    if (
+      !user ||
+      (user.role !== "admin" &&
+        user.restaurantId?.toString() !== waitlistEntry.restaurantId.toString())
+    ) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Check if entry can be removed
+    if (waitlistEntry.status === "cancelled") {
+      return res
+        .status(400)
+        .json({ message: "This waitlist entry is already cancelled" });
+    }
+
+    // Remove the entry by setting status to cancelled
+    waitlistEntry.status = "cancelled";
+    waitlistEntry.cancelledAt = new Date();
+    waitlistEntry.cancellationReason = reason || "Removed by admin";
+    await waitlistEntry.save();
+
+    // Update positions for remaining entries
+    await updatePositions(waitlistEntry.restaurantId.toString());
+
+    res.json({ message: "Customer has been removed from the waitlist" });
+  } catch (error) {
+    console.error("Remove customer error:", error);
+    res
+      .status(500)
+      .json({ message: "Server error while removing customer from waitlist" });
+  }
+}) as RequestHandler);
+
 export default router;
