@@ -25,10 +25,10 @@ router.get("/me", authenticate, (async (req: AuthRequest, res: Response) => {
 router.put("/me", authenticate, (async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id;
-    const { currentPassword, email, name, phone } = req.body;
+    const { currentPassword, email, name, phone, newPassword } = req.body;
 
     // Find user by ID
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("+password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -39,8 +39,10 @@ router.put("/me", authenticate, (async (req: AuthRequest, res: Response) => {
       if (emailExists) {
         return res.status(400).json({ message: "Email already in use" });
       }
+      user.email = email;
     }
 
+    // Validate current password
     const isPasswordValid = await validatePassword(
       currentPassword,
       user.password
@@ -50,12 +52,13 @@ router.put("/me", authenticate, (async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    // Update user
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: { name, email, phone } },
-      { new: true }
-    ).select("-password");
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (newPassword) {
+      user.password = await hashPassword(newPassword);
+    }
+    await user.save();
+    const { password, ...updatedUser } = user.toObject();
 
     res.status(200).json(updatedUser);
   } catch (error) {
