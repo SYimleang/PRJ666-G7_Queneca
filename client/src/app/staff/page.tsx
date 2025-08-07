@@ -177,16 +177,26 @@ export default function StaffDashboardPage() {
         </Card>
       )}
       {/* Tables */}
-      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {tables.map((table) => (
-          <TableCard
-            key={table._id}
-            table={table}
-            onSeat={handleSeatTable}
-            onClear={handleClearTable}
-          />
-        ))}
-      </div>
+      <Card>
+        <CardContent>
+          <CardTitle className='text-xl'>Table Management</CardTitle>
+          {tables.length >= 1 ? (
+            
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {tables.map((table) => (
+              <TableCard
+              key={table._id}
+              table={table}
+              onSeat={handleSeatTable}
+              onClear={handleClearTable}
+              />
+            ))}
+          </div>
+          ) : (
+            <>Configure tables using admin account to start managing tables</>
+          )}
+        </CardContent>
+       </Card>
       {/* Waitlist Summary */}
       <WaitlistSummary />
       {/* Waitlist Management Table */}
