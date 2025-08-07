@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -108,44 +109,46 @@ export default function WaitlistSummary() {
   }
 
   return (
-    <Card className='mt-5'>
+    <Card className="mt-5">
       <CardHeader>
         <CardTitle>Waitlist Overview</CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className='text-center py-4'>
-            <p className='text-gray-600'>Loading stats...</p>
+          <div className="text-center py-4">
+            <p className="text-gray-600">Loading stats...</p>
           </div>
         ) : (
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 text-center'>
-            <div className='p-4 bg-blue-50 rounded-lg'>
-              <p className='text-2xl font-bold text-blue-600'>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <p className="text-2xl font-bold text-blue-600">
                 {stats.totalWaiting}
               </p>
-              <p className='text-sm text-gray-600'>Currently Waiting</p>
+              <p className="text-sm text-gray-600">Currently Waiting</p>
             </div>
-            <div className='p-4 bg-green-50 rounded-lg'>
-              <p className='text-2xl font-bold text-green-600'>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <p className="text-2xl font-bold text-green-600">
                 {stats.totalCalled}
               </p>
-              <p className='text-sm text-gray-600'>Called</p>
+              <p className="text-sm text-gray-600">Called</p>
             </div>
-            <div className='p-4 bg-purple-50 rounded-lg'>
-              <p className='text-2xl font-bold text-purple-600'>
+            <div className="p-4 bg-purple-50 rounded-lg">
+              <p className="text-2xl font-bold text-purple-600">
                 {stats.avgWaitTime > 0
                   ? formatWaitTime(stats.avgWaitTime)
                   : "N/A"}
               </p>
-              <p className='text-sm text-gray-600'>Avg Wait Time</p>
+              <p className="text-sm text-gray-600">Avg Wait Time</p>
             </div>
-            <div className='p-4 bg-gray-50 rounded-lg'>
-              <p className='text-2xl font-bold text-gray-600'>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-2xl font-bold text-gray-600">
                 {stats.capacity > 0
-                  ? `${stats.totalWaiting + stats.totalCalled}/${stats.capacity}`
+                  ? `${stats.totalWaiting + stats.totalCalled}/${
+                      stats.capacity
+                    }`
                   : "N/A"}
               </p>
-              <p className='text-sm text-gray-600'>Capacity</p>
+              <p className="text-sm text-gray-600">Capacity</p>
             </div>
           </div>
         )}

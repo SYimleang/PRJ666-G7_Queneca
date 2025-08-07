@@ -47,7 +47,9 @@ export default function RestaurantInfoPage() {
   const reviewSectionRef = useRef<HTMLDivElement>(null);
   const [averageRating, setAverageRating] = useState<number>(0);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { gameTriggered, resetGame } = useGameContext();
+  // eslint-disable-next-line react/jsx-key
   const games = [<MemoryMatchPage />, <GuessGamePage />, <SpinGamePage />];
   const [gameIndex, setGameIndex] = useState(0);
   const [randomGame, setRandomGame] = useState(games[0]); // Default to Game 1
@@ -72,7 +74,7 @@ export default function RestaurantInfoPage() {
 
     const todayHours = restaurant.hours.find(
       (h: { day: string; open: string; close: string }) =>
-        h.day.toLowerCase() === currentDay,
+        h.day.toLowerCase() === currentDay
     );
     if (!todayHours) {
       return false; // No hours for today
@@ -112,7 +114,7 @@ export default function RestaurantInfoPage() {
 
         // Fetch the menu items for the restaurant
         const menuRes = await fetch(
-          `${apiUrl}/api/menus/restaurant/${data.restaurant._id}`,
+          `${apiUrl}/api/menus/restaurant/${data.restaurant._id}`
         );
         const menuData = await menuRes.json();
         console.log("Menu Data:", menuData);
@@ -122,7 +124,7 @@ export default function RestaurantInfoPage() {
 
         // Fetch reviews for the restaurant
         const reviewsRes = await fetch(
-          `${apiUrl}/api/reviews/restaurant/${data.restaurant._id}`,
+          `${apiUrl}/api/reviews/restaurant/${data.restaurant._id}`
         );
         const reviewData = await reviewsRes.json();
         const fetchedReviews = reviewData.reviews || [];
@@ -132,7 +134,7 @@ export default function RestaurantInfoPage() {
         if (fetchedReviews.length > 0) {
           const total = fetchedReviews.reduce(
             (sum: number, review: Review) => sum + review.rating,
-            0,
+            0
           );
           const avg = total / fetchedReviews.length;
           setAverageRating(avg);

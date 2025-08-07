@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import AdminNav from "@/components/AdminNav";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,8 +7,6 @@ import VisitorsChart from "@/components/VisitorsChart";
 import PeakHoursHeatmap from "@/components/PeakHoursHeatmap";
 
 export default function AnalyticsPage() {
-  const [loading, setLoading] = useState(true);
-
   return (
     <div className="container mx-auto p-6">
       <AdminNav></AdminNav>

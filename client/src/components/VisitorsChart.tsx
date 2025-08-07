@@ -49,6 +49,7 @@ const VisitorsChart = ({
 
         const json = await res.json();
         setData(json);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(err.message);
       } finally {

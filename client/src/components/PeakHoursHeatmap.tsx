@@ -43,6 +43,7 @@ const PeakHoursHeatmap = () => {
           .fill(null)
           .map(() => Array(24).fill(0));
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.forEach((entry: any) => {
           console.log(
             "Peak hours data:",
@@ -57,6 +58,7 @@ const PeakHoursHeatmap = () => {
 
         setHeatmap(matrix);
         setError("");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error("Error fetching peak hours:", err);
         setError(err.message || "Failed to fetch peak hours stats");

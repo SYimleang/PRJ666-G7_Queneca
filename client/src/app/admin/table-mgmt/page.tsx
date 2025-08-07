@@ -115,6 +115,7 @@ export default function AdminTablesPage() {
         setError("Error: Failed to add table");
         alert(error.message || "Failed to add table");
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Failed to add table: " + err);
       setError(err + " failed to add table");

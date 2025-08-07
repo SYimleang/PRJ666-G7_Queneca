@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -307,8 +308,8 @@ export default function WaitlistTable() {
   if (!user || !restaurant) {
     return (
       <Card>
-        <CardContent className='p-6 text-center'>
-          <p className='text-gray-600'>Please log in to view waitlist</p>
+        <CardContent className="p-6 text-center">
+          <p className="text-gray-600">Please log in to view waitlist</p>
         </CardContent>
       </Card>
     );
@@ -316,36 +317,36 @@ export default function WaitlistTable() {
 
   return (
     <Card>
-      <CardHeader className='space-y-4'>
-        <div className='flex flex-row items-center justify-between'>
-          <CardTitle className='text-xl'>Waitlist Management</CardTitle>
-          <div className='flex items-center gap-4'>
+      <CardHeader className="space-y-4">
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle className="text-xl">Waitlist Management</CardTitle>
+          <div className="flex items-center gap-4">
             <Button
               onClick={fetchWaitlist}
               disabled={loading}
-              variant='outline'
-              size='sm'
+              variant="outline"
+              size="sm"
             >
               {loading ? "Refreshing..." : "Refresh"}
             </Button>
             {settings && (
-              <div className='text-sm text-gray-600'>
+              <div className="text-sm text-gray-600">
                 {waitlist.length} / {settings.maxCapacity} capacity
               </div>
             )}
           </div>
         </div>
-        <div className='flex items-center gap-4'>
-          <div className='flex-1 max-w-md'>
+        <div className="flex items-center gap-4">
+          <div className="flex-1 max-w-md">
             <Input
-              placeholder='Search by customer name or phone...'
+              placeholder="Search by customer name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className='w-full'
+              className="w-full"
             />
           </div>
           {filteredWaitlist.length !== waitlist.length && (
-            <div className='text-sm text-gray-600'>
+            <div className="text-sm text-gray-600">
               Showing {filteredWaitlist.length} of {waitlist.length} customers
             </div>
           )}
@@ -353,35 +354,35 @@ export default function WaitlistTable() {
       </CardHeader>
       <CardContent>
         {error && (
-          <div className='mb-4 p-3 bg-red-100 border border-red-300 rounded-lg'>
-            <p className='text-red-800 text-sm'>{error}</p>
+          <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg">
+            <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}
 
         {loading ? (
-          <div className='text-center py-8'>
-            <p className='text-gray-600'>Loading waitlist...</p>
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading waitlist...</p>
           </div>
         ) : waitlist.length === 0 ? (
-          <div className='text-center py-8'>
-            <p className='text-gray-600'>No customers in waitlist</p>
+          <div className="text-center py-8">
+            <p className="text-gray-600">No customers in waitlist</p>
           </div>
         ) : filteredWaitlist.length === 0 ? (
-          <div className='text-center py-8'>
-            <p className='text-gray-600'>No customers match your search</p>
+          <div className="text-center py-8">
+            <p className="text-gray-600">No customers match your search</p>
           </div>
         ) : (
-          <div className='overflow-x-auto'>
-            <table className='w-full border-collapse'>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
               <thead>
-                <tr className='border-b border-gray-200'>
-                  <th className='text-left p-3 font-semibold'>#</th>
-                  <th className='text-left p-3 font-semibold'>Customer</th>
-                  <th className='text-left p-3 font-semibold'>Party</th>
-                  <th className='text-left p-3 font-semibold'>Wait Time</th>
-                  <th className='text-left p-3 font-semibold'>Joined</th>
-                  <th className='text-left p-3 font-semibold'>Status</th>
-                  <th className='text-left p-3 font-semibold'>Actions</th>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left p-3 font-semibold">#</th>
+                  <th className="text-left p-3 font-semibold">Customer</th>
+                  <th className="text-left p-3 font-semibold">Party</th>
+                  <th className="text-left p-3 font-semibold">Wait Time</th>
+                  <th className="text-left p-3 font-semibold">Joined</th>
+                  <th className="text-left p-3 font-semibold">Status</th>
+                  <th className="text-left p-3 font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -392,53 +393,53 @@ export default function WaitlistTable() {
                       entry.status === "called" ? "bg-green-50" : ""
                     }`}
                   >
-                    <td className='p-3'>
-                      <span className='font-bold text-lg text-blue-600'>
+                    <td className="p-3">
+                      <span className="font-bold text-lg text-blue-600">
                         {entry.position}
                       </span>
                     </td>
-                    <td className='p-3'>
+                    <td className="p-3">
                       <TooltipWrapper
                         customerId={entry.customerId}
                         apiToken={user.token}
                         renderContent={renderHistory}
                       >
-                        <p className='font-medium cursor-pointer underline underline-offset-2 text-blue-600 hover:text-blue-800'>
+                        <p className="font-medium cursor-pointer underline underline-offset-2 text-blue-600 hover:text-blue-800">
                           {entry.customerName}
                         </p>
                       </TooltipWrapper>
                       <div>
-                        <p className='text-sm text-gray-600'>
+                        <p className="text-sm text-gray-600">
                           {formatPhone(entry.customerPhone)}
                         </p>
                         {entry.notes && (
-                          <p className='text-xs text-gray-500 mt-1'>
+                          <p className="text-xs text-gray-500 mt-1">
                             Note: {entry.notes}
                           </p>
                         )}
                       </div>
                     </td>
-                    <td className='p-3'>
-                      <span className='text-lg font-semibold'>
+                    <td className="p-3">
+                      <span className="text-lg font-semibold">
                         {entry.partySize}
                       </span>
                     </td>
-                    <td className='p-3'>
-                      <span className='text-sm font-medium'>
+                    <td className="p-3">
+                      <span className="text-sm font-medium">
                         {formatWaitTime(entry.estimatedWaitTime)}
                       </span>
                     </td>
-                    <td className='p-3'>
-                      <div className='text-sm'>
+                    <td className="p-3">
+                      <div className="text-sm">
                         <p>{formatTime(entry.joinedAt)}</p>
                         {entry.calledAt && (
-                          <p className='text-green-600 font-medium'>
+                          <p className="text-green-600 font-medium">
                             Called: {formatTime(entry.calledAt)}
                           </p>
                         )}
                       </div>
                     </td>
-                    <td className='p-3'>
+                    <td className="p-3">
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
                           entry.status
@@ -447,24 +448,24 @@ export default function WaitlistTable() {
                         {getStatusText(entry.status)}
                       </span>
                     </td>
-                    <td className='p-3'>
-                      <div className='flex gap-2 flex-wrap'>
+                    <td className="p-3">
+                      <div className="flex gap-2 flex-wrap">
                         {entry.status === "waiting" && (
                           <>
                             <Button
                               onClick={() => callCustomer(entry.id)}
                               disabled={actionLoading === entry.id}
-                              size='sm'
-                              className='bg-green-600 hover:bg-green-700 text-white'
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white"
                             >
                               {actionLoading === entry.id ? "..." : "Call"}
                             </Button>
                             <Button
                               onClick={() => removeCustomer(entry.id)}
                               disabled={actionLoading === entry.id}
-                              size='sm'
-                              variant='outline'
-                              className='border-red-300 text-red-600 hover:bg-red-50'
+                              size="sm"
+                              variant="outline"
+                              className="border-red-300 text-red-600 hover:bg-red-50"
                             >
                               {actionLoading === entry.id ? "..." : "Remove"}
                             </Button>
@@ -475,26 +476,26 @@ export default function WaitlistTable() {
                             <Button
                               onClick={() => seatCustomer(entry.id)}
                               disabled={actionLoading === entry.id}
-                              size='sm'
-                              className='bg-blue-600 hover:bg-blue-700 text-white'
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
                             >
                               {actionLoading === entry.id ? "..." : "Seat"}
                             </Button>
                             <Button
                               onClick={() => markNoShow(entry.id)}
                               disabled={actionLoading === entry.id}
-                              size='sm'
-                              variant='outline'
-                              className='border-orange-300 text-orange-600 hover:bg-orange-50'
+                              size="sm"
+                              variant="outline"
+                              className="border-orange-300 text-orange-600 hover:bg-orange-50"
                             >
                               {actionLoading === entry.id ? "..." : "No Show"}
                             </Button>
                             <Button
                               onClick={() => removeCustomer(entry.id)}
                               disabled={actionLoading === entry.id}
-                              size='sm'
-                              variant='outline'
-                              className='border-red-300 text-red-600 hover:bg-red-50'
+                              size="sm"
+                              variant="outline"
+                              className="border-red-300 text-red-600 hover:bg-red-50"
                             >
                               {actionLoading === entry.id ? "..." : "Remove"}
                             </Button>
@@ -509,9 +510,9 @@ export default function WaitlistTable() {
           </div>
         )}
 
-        <div className='mt-6 p-4 bg-gray-50 rounded-lg'>
-          <h4 className='font-semibold mb-2'>Waitlist Actions Guide:</h4>
-          <ul className='text-sm text-gray-600 space-y-1'>
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <h4 className="font-semibold mb-2">Waitlist Actions Guide:</h4>
+          <ul className="text-sm text-gray-600 space-y-1">
             <li>
               • <strong>Call:</strong> Notify customer their table is ready
             </li>
@@ -536,35 +537,35 @@ export default function WaitlistTable() {
     const { waitlistHistory, reviews } = history;
 
     if (!history || history.length === 0) {
-      return <p className='text-sm text-gray-500'>No visit history found.</p>;
+      return <p className="text-sm text-gray-500">No visit history found.</p>;
     }
 
     return (
-      <div className='space-y-2 text-sm'>
-        <p className='font-semibold'>Visited:</p>
+      <div className="space-y-2 text-sm">
+        <p className="font-semibold">Visited:</p>
         {waitlistHistory.map((visit, i) => (
-          <div key={visit.id} className='border-b pb-1 last:border-none'>
+          <div key={visit.id} className="border-b pb-1 last:border-none">
             <p>
               {new Date(visit.joinedAt).toLocaleDateString()} — Party of{" "}
               {visit.partySize}
             </p>
             {visit.notes && (
-              <p className='text-xs text-gray-500'>Note: {visit.notes}</p>
+              <p className="text-xs text-gray-500">Note: {visit.notes}</p>
             )}
           </div>
         ))}
         {reviews.length > 0 && (
-          <div className='pt-2'>
-            <p className='font-semibold'>Reviews:</p>
+          <div className="pt-2">
+            <p className="font-semibold">Reviews:</p>
             {reviews.map((r) => (
-              <div key={r.id} className='text-yellow-600 text-sm'>
+              <div key={r.id} className="text-yellow-600 text-sm">
                 ⭐ {r.rating}/5 {r.comment && <span>— {r.comment}</span>}
               </div>
             ))}
           </div>
         )}
         {waitlistHistory.length === 0 && reviews.length === 0 && (
-          <p className='text-gray-400 italic'>No history available.</p>
+          <p className="text-gray-400 italic">No history available.</p>
         )}
       </div>
     );
