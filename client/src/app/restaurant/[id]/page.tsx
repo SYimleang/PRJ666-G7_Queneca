@@ -81,8 +81,8 @@ export default function RestaurantInfoPage() {
     }
 
     return (
-      todayHours.open &&
-      todayHours.close &&
+      !!todayHours.open &&
+      !!todayHours.close &&
       currentTime >= todayHours.open &&
       currentTime <= todayHours.close
     );
