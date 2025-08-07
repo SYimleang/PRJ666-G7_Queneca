@@ -9,16 +9,51 @@ import Image from "next/image";
 import AdminNav from "@/components/AdminNav";
 import { useRestaurant } from "@/context/RestaurantContext";
 import { useUser } from "@/context/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import WaitlistSummary from "@/components/WaitlistSummary";
 import WaitlistTable from "@/components/WaitlistTable";
+import TableCard from "@/components/ui/tableCard";
 
+type Table = {
+  _id: string;
+  tableNumber: number;
+  status: "available" | "occupied";
+  seatedParty?: {
+    name: string;
+    size: number;
+  };
+  seats: number;
+};
 export default function AdminDashboardPage() {
   const { restaurant } = useRestaurant();
   const { user } = useUser();
   const [src, setSrc] = useState(restaurant?.logoUrl || "/restaurant_logo.png");
+  const [tables, setTables] = useState<Table[]>([]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+  const restaurantId = user?.restaurantId;
 
+  useEffect(() => {
+    if (restaurantId) {
+      fetchTables();
+    }
+  }, [restaurantId]);
+
+  const fetchTables = async () => {
+    const token = user?.token;
+    const res = await fetch(`${apiUrl}/api/tables`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      console.error("Failed to fetch tables");
+      return;
+    }
+    const data = await res.json();
+    setTables(data.tables ?? data);
+  };
   const printQRCode = () => {
     if (!restaurant?.qrCode) return;
 
@@ -59,6 +94,41 @@ export default function AdminDashboardPage() {
     }, 500);
   };
 
+  const handleSeatTable = async (tableId: string) => {
+    const token = user?.token;
+
+    const res = await fetch(`${apiUrl}/api/tables/${tableId}/seat`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      const updated = await res.json();
+      setTables((prev) =>
+        prev.map((t) => (t._id === tableId ? updated.table : t))
+      );
+    }
+  };
+
+  const handleClearTable = async (tableId: string) => {
+    const token = user?.token;
+
+    const res = await fetch(`${apiUrl}/api/tables/${tableId}/clear`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      const updated = await res.json();
+      setTables((prev) =>
+        prev.map((t) => (t._id === tableId ? updated.table : t))
+      );
+    }
+  };
   return (
     <div className="container mx-auto p-6">
       {/* Custom Navbar Slot */}
@@ -170,7 +240,26 @@ export default function AdminDashboardPage() {
           ) : null}
         </CardContent>
       </Card>
-
+      {/* Tables */}
+      <Card className="mt-6">
+        <CardContent>
+          <CardTitle className="mb-6 text-xl">Table Management</CardTitle>
+          {tables.length >= 1 ? (
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {tables.map((table) => (
+                <TableCard
+                  key={table._id}
+                  table={table}
+                  onSeat={handleSeatTable}
+                  onClear={handleClearTable}
+                />
+              ))}
+            </div>
+          ) : (
+            <>Configure tables using admin account to start managing tables</>
+          )}
+        </CardContent>
+      </Card>
       {/* Waitlist Summary */}
       <WaitlistSummary />
 
