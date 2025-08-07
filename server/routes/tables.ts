@@ -20,7 +20,9 @@ router.get("/", authenticate, requireAdminOrStaff, (async (
       return res.status(400).json({ message: "No associated restaurant" });
     }
 
-    const tables = await Table.find({ restaurantId: user.restaurantId });
+    const tables = await Table.find({ restaurantId: user.restaurantId }).sort({
+      tableNumber: 1,
+    });
     res.json({ tables });
   } catch (err) {
     console.error("Error fetching tables:", err);
