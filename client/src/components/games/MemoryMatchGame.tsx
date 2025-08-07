@@ -23,6 +23,7 @@ export const MemoryMatchGame = () => {
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const [matchedCount, setMatchedCount] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [startTime, setStartTime] = useState<number | null>(null);
   const [timer, setTimer] = useState(30);
 
@@ -34,7 +35,7 @@ export const MemoryMatchGame = () => {
         emoji,
         matched: false,
         flipped: false,
-      }),
+      })
     );
     setCards(shuffled);
     setStartTime(Date.now());
@@ -70,7 +71,7 @@ export const MemoryMatchGame = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     return Array.from(
       { length },
-      () => chars[Math.floor(Math.random() * chars.length)],
+      () => chars[Math.floor(Math.random() * chars.length)]
     ).join("");
   };
 
@@ -119,7 +120,7 @@ export const MemoryMatchGame = () => {
         emoji,
         matched: false,
         flipped: false,
-      }),
+      })
     );
     setCards(shuffled);
     setFlippedIndices([]);
@@ -143,8 +144,8 @@ export const MemoryMatchGame = () => {
               card.matched
                 ? "bg-green-100 text-green-600"
                 : card.flipped
-                  ? "bg-yellow-100 text-yellow-600"
-                  : "bg-gray-100 text-gray-200",
+                ? "bg-yellow-100 text-yellow-600"
+                : "bg-gray-100 text-gray-200"
             )}
           >
             <CardContent className="flex items-center justify-center h-full w-full">

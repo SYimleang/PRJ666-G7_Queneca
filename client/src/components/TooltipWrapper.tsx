@@ -1,7 +1,7 @@
 // components/TooltipWrapper.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -63,8 +63,8 @@ export default function TooltipWrapper({
         const data = await res.json();
         console.log("Fetched visit history:", data);
         setHistory({
-            waitlistHistory: data.waitlistHistory || [],
-            reviews: data.reviews || [],
+          waitlistHistory: data.waitlistHistory || [],
+          reviews: data.reviews || [],
         });
       } else {
         setHistory({ waitlistHistory: [], reviews: [] });

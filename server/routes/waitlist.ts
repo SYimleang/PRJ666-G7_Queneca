@@ -1,4 +1,4 @@
-import express, { Request, Response, RequestHandler } from "express";
+import express, { Response, RequestHandler } from "express";
 import {
   authenticate,
   AuthRequest,
@@ -12,7 +12,17 @@ import Review from "../models/Review";
 const router = express.Router();
 
 // Helper function to check if restaurant is open
-const isRestaurantOpen = (restaurant: any): boolean => {
+interface RestaurantHours {
+  day: string;
+  open: string;
+  close: string;
+}
+
+interface RestaurantType {
+  hours?: RestaurantHours[];
+}
+
+const isRestaurantOpen = (restaurant: RestaurantType): boolean => {
   if (!restaurant.hours || restaurant.hours.length === 0) {
     return true; // If no hours set, assume always open
   }
@@ -24,7 +34,7 @@ const isRestaurantOpen = (restaurant: any): boolean => {
   const currentTime = now.toTimeString().substring(0, 5); // HH:MM format
 
   const todayHours = restaurant.hours.find(
-    (h: any) => h.day.toLowerCase() === currentDay
+    (h: RestaurantHours) => h.day.toLowerCase() === currentDay
   );
   if (!todayHours) {
     return false; // No hours for today
@@ -36,6 +46,7 @@ const isRestaurantOpen = (restaurant: any): boolean => {
 // Helper function to calculate estimated wait time
 const calculateEstimatedWaitTime = (
   position: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   restaurant: any
 ): number => {
   return position * restaurant.waitlistSettings.estimatedWaitTimePerCustomer;
@@ -193,6 +204,7 @@ router.get("/status/:restaurantId", authenticate, (async (
     res.json({
       waitlistEntry: {
         id: waitlistEntry._id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         restaurantName: (waitlistEntry.restaurantId as any).name,
         position: waitlistEntry.position,
         estimatedWaitTime: waitlistEntry.estimatedWaitTime,

@@ -7,7 +7,6 @@ import { useUser } from "@/context/UserContext";
 import { useRestaurant } from "@/context/RestaurantContext";
 import TableCard from "@/components/ui/tableCard";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -65,7 +64,7 @@ export default function StaffDashboardPage() {
     if (res.ok) {
       const updated = await res.json();
       setTables((prev) =>
-        prev.map((t) => (t._id === tableId ? updated.table : t)),
+        prev.map((t) => (t._id === tableId ? updated.table : t))
       );
     }
   };
@@ -83,7 +82,7 @@ export default function StaffDashboardPage() {
     if (res.ok) {
       const updated = await res.json();
       setTables((prev) =>
-        prev.map((t) => (t._id === tableId ? updated.table : t)),
+        prev.map((t) => (t._id === tableId ? updated.table : t))
       );
     }
   };
@@ -180,23 +179,23 @@ export default function StaffDashboardPage() {
       <Card>
         <CardContent>
           <CardTitle className='mb-6 text-xl'>Table Management</CardTitle>
+
           {tables.length >= 1 ? (
-            
             <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {tables.map((table) => (
-              <TableCard
-              key={table._id}
-              table={table}
-              onSeat={handleSeatTable}
-              onClear={handleClearTable}
-              />
-            ))}
-          </div>
+              {tables.map((table) => (
+                <TableCard
+                  key={table._id}
+                  table={table}
+                  onSeat={handleSeatTable}
+                  onClear={handleClearTable}
+                />
+              ))}
+            </div>
           ) : (
             <>Configure tables using admin account to start managing tables</>
           )}
         </CardContent>
-       </Card>
+      </Card>
       {/* Waitlist Summary */}
       <WaitlistSummary />
       {/* Waitlist Management Table */}
