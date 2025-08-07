@@ -501,6 +501,17 @@ export default function WaitlistTable() {
                             </Button>
                           </>
                         )}
+                        {entry.status === "seated" && (
+                          <Button
+                            onClick={() => removeCustomer(entry.id)}
+                            disabled={actionLoading === entry.id}
+                            size="sm"
+                            variant="outline"
+                            className="border-red-300 text-red-600 hover:bg-red-50"
+                          >
+                            {actionLoading === entry.id ? "..." : "Remove"}
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
