@@ -1,18 +1,18 @@
-import bcrypt from 'bcryptjs';
-import jwt, { SignOptions } from 'jsonwebtoken';
+import bcrypt from "bcryptjs";
+import jwt, { SignOptions } from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 interface DecodedUser {
   id: string;
   email: string;
   role: string;
-  username: string;
+  name: string;
   phone: string;
 }
 
 // Check if JWT_SECRET is defined
 if (!JWT_SECRET) {
-  throw new Error('Missing JWT_SECRET in environment variables');
+  throw new Error("Missing JWT_SECRET in environment variables");
 }
 
 // hashPassword hashes a password using bcrypt
@@ -32,7 +32,7 @@ export async function validatePassword(
 // generateToken creates a JWT token for a user
 export function generateToken(
   payload: object,
-  expiresIn: SignOptions['expiresIn'] = '1d'
+  expiresIn: SignOptions["expiresIn"] = "1d"
 ): string {
   const options: SignOptions = { expiresIn };
   return jwt.sign(payload, JWT_SECRET as jwt.Secret, options);
@@ -40,11 +40,11 @@ export function generateToken(
 
 // verifyToken verifies a JWT token and returns the decoded user information
 export function verifyToken(token: string): DecodedUser | null {
-  if (!JWT_SECRET) throw new Error('JWT_SECRET is not defined');
+  if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined");
   try {
     return jwt.verify(token, JWT_SECRET) as DecodedUser;
   } catch (err) {
-    console.error('Token verification failed:', err);
+    console.error("Token verification failed:", err);
     return null;
   }
 }

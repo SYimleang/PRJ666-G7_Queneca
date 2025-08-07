@@ -1,12 +1,16 @@
-import '../styles/globals.css';
-import { Inter } from 'next/font/google';
-import Navbar from '@/components/Navbar';
-import { UserProvider } from '../context/UserContext';
-const inter = Inter({ subsets: ['latin'] });
+import "../styles/globals.css";
+import { Inter } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { UserProvider } from "../context/UserContext";
+import { RestaurantProvider } from "../context/RestaurantContext";
+import { GameProvider } from "../context/GameContext";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'Queneca',
-  description: 'Your app description',
+  title: "Queneca",
+  description: "Your app description",
 };
 
 export default function RootLayout({
@@ -18,8 +22,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <UserProvider>
-          <Navbar />
-          <main className="pt-4 px-2">{children}</main>
+          <RestaurantProvider>
+            <GameProvider>
+              <Navbar />
+              <main className="pt-4 px-2">{children}</main>
+              <Footer />
+            </GameProvider>
+          </RestaurantProvider>
         </UserProvider>
       </body>
     </html>

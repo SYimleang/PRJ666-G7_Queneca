@@ -1,17 +1,24 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useUser } from '../context/UserContext';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useUser } from "../context/UserContext";
+import { IRestaurant } from "@/types/restaurant";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 export default function Navbar() {
   const { user, setUser } = useUser();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<IRestaurant[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -22,23 +29,43 @@ export default function Navbar() {
         setOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (query.trim()) {
+        fetch(`${apiUrl}/api/restaurants`)
+          .then((res) => res.json())
+          .then((data) => {
+            const filtered = data.restaurants.filter((r: IRestaurant) =>
+              r.name.toLowerCase().includes(query.toLowerCase())
+            );
+            setResults(filtered);
+            setShowDropdown(true);
+          });
+      } else {
+        setResults([]);
+        setShowDropdown(false);
+      }
+    }, 300); // debounce
+
+    return () => clearTimeout(delayDebounce);
+  }, [query]);
 
   // Determine dashboard link based on role
   const getDashboardLink = () => {
-    console.log(user?.role);
-    if (!user) return '/';
+    if (!user) return "/";
     switch (user.role) {
-      case 'admin':
-        return '/admin';
-      case 'staff':
-        return '/staff';
-      case 'customer':
-        return '/customer';
+      case "admin":
+        return "/admin";
+      case "staff":
+        return "/staff";
+      case "customer":
+        return "/";
       default:
-        return '/';
+        return "/";
     }
   };
 
@@ -61,7 +88,7 @@ export default function Navbar() {
               About Us
             </Link>
             <Link
-              href="/support"
+              href="/faqs"
               className="text-red-600 hover:text-red-500 transition-colors"
             >
               Support
@@ -69,11 +96,32 @@ export default function Navbar() {
           </nav>
 
           {/* Search Bar */}
-          <Input
-            type="text"
-            placeholder="Search..."
-            className="bg-amber-50 w-48 md:w-64"
-          />
+          <div className="relative">
+            <Input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search..."
+              className="bg-amber-50 w-48 md:w-64"
+            />
+            {showDropdown && results.length > 0 && (
+              <div className="absolute bg-white border border-gray-200 mt-1 rounded w-full shadow-md z-50">
+                {results.map((restaurant) => (
+                  <Link
+                    key={restaurant._id}
+                    href={`/restaurant/${restaurant._id}`}
+                    className="block px-4 py-2 hover:bg-gray-100 text-sm"
+                    onClick={() => {
+                      setShowDropdown(false);
+                      setQuery("");
+                    }}
+                  >
+                    {restaurant.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Section */}
@@ -82,9 +130,9 @@ export default function Navbar() {
             <div ref={dropdownRef} className="relative inline-block text-left">
               <button
                 onClick={() => setOpen(!open)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded"
               >
-                {user.username}
+                {user.name}
               </button>
 
               {open && (
@@ -96,15 +144,16 @@ export default function Navbar() {
                   >
                     Edit Profile
                   </Link>
-                  <button
+                  <Link
                     onClick={() => {
                       setUser(null);
                       setOpen(false);
                     }}
+                    href="/auth?mode=login"
                     className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
                   >
                     Log Out
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>

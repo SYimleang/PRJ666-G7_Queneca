@@ -1,48 +1,43 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUser extends Document {
-  _id: mongoose.Types.ObjectId;
+  name: string;
   email: string;
   password: string;
-  username: string;
   phone: string;
-  role: string;
+  role: "admin" | "staff" | "customer";
+  restaurantId?: mongoose.Types.ObjectId; // Staff/Admin only
+  rewardsPoints?: number; // Customer only
   createdAt: Date;
   updatedAt: Date;
 }
 
 const userSchema = new Schema<IUser>(
   {
+    _id: { type: Schema.Types.ObjectId, auto: true },
+    name: { type: String, required: true, trim: true },
     email: {
       type: String,
       required: true,
       unique: true,
-      trim: true,
       lowercase: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    username: {
-      type: String,
-      required: true,
       trim: true,
     },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    password: { type: String, required: true },
+    phone: { type: String, required: true, trim: true },
     role: {
       type: String,
+      enum: ["admin", "staff", "customer"],
       required: true,
-      trim: true,
     },
+    restaurantId: {
+      type: Schema.Types.ObjectId,
+      ref: "Restaurant",
+      default: null,
+    },
+    rewardsPoints: { type: Number, default: 0 },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-export default mongoose.model<IUser>('User', userSchema);
+export default mongoose.model<IUser>("User", userSchema);

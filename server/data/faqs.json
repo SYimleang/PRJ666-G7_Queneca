@@ -1,0 +1,18 @@
+[
+  {
+    "question": "How does the waitlist system work?",
+    "answer": "Customers join the waitlist online or in-store. Staff manage the list in real-time, and customers receive SMS or in-app updates."
+  },
+  {
+    "question": "Can I manage multiple restaurants?",
+    "answer": "Yes. Admin users can manage multiple restaurant locations under one account."
+  },
+  {
+    "question": "Do customers need an account to join the waitlist?",
+    "answer": "Yes. Customers can join using their name, email and phone number."
+  },
+  {
+    "question": "How do I update my restaurant info?",
+    "answer": "Admins can go to the dashboard, navigate to 'Restaurant Settings', and update name, hours, and contact details."
+  }
+]
