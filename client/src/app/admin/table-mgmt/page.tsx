@@ -6,6 +6,7 @@ import TableCard from "@/components/ui/tableCard";
 import { useUser } from "@/context/UserContext";
 import AdminNav from "@/components/AdminNav";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Table = {
   _id: string;
@@ -161,46 +162,50 @@ export default function AdminTablesPage() {
           {success}
         </div>
       )}
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-4">Manage Tables</h1>
+     <Card>
+        <CardContent>
+          <div className="p-6">
+            <h1 className="text-3xl font-bold mb-4">Manage Tables</h1>
 
-        <div className="mb-6 flex items-center gap-4">
-          <input
-            type="number"
-            placeholder="Table Number"
-            value={newTableNumber}
-            onChange={(e) => setNewTableNumber(e.target.value)}
-            className="border px-4 py-2 rounded"
-          />
-          <input
-            type="number"
-            placeholder="# of Seats"
-            value={newSeats}
-            onChange={(e) => setNewSeats(e.target.value)}
-            className="border px-4 py-2 rounded"
-          />
+            <div className="mb-6 flex items-center gap-4">
+              <input
+                type="number"
+                placeholder="Table Number"
+                value={newTableNumber}
+                onChange={(e) => setNewTableNumber(e.target.value)}
+                className="border px-4 py-2 rounded"
+              />
+              <input
+                type="number"
+                placeholder="# of Seats"
+                value={newSeats}
+                onChange={(e) => setNewSeats(e.target.value)}
+                className="border px-4 py-2 rounded"
+              />
 
-          <button
-            onClick={handleAddTable}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-            disabled={saving}
-          >
-            {saving ? "Adding Table..." : "Add Table"}
-          </button>
-        </div>
+              <button
+                onClick={handleAddTable}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+                disabled={saving}
+              >
+                {saving ? "Adding Table..." : "Add Table"}
+              </button>
+            </div>
 
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {tables.map((table) => (
-            <TableCard
-              key={table._id}
-              table={table}
-              onSeat={handleSeatTable}
-              onClear={handleClearTable}
-              onDelete={() => handleDeleteTable(table._id)}
-            />
-          ))}
-        </div>
-      </div>
+            <div className="grid gap-20 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {tables.map((table) => (
+                <TableCard
+                  key={table._id}
+                  table={table}
+                  onSeat={handleSeatTable}
+                  onClear={handleClearTable}
+                  onDelete={() => handleDeleteTable(table._id)}
+                />
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
