@@ -58,6 +58,7 @@ router.put("/me", authenticate, (async (req: AuthRequest, res: Response) => {
       user.password = await hashPassword(newPassword);
     }
     await user.save();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...updatedUser } = user.toObject();
 
     res.status(200).json(updatedUser);
