@@ -46,6 +46,7 @@ const isRestaurantOpen = (restaurant: RestaurantType): boolean => {
 // Helper function to calculate estimated wait time
 const calculateEstimatedWaitTime = (
   position: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   restaurant: any
 ): number => {
   return position * restaurant.waitlistSettings.estimatedWaitTimePerCustomer;

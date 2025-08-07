@@ -42,7 +42,7 @@ router.get("/visitors", authenticate, requireAdminOrStaff, (async (
     console.log(`Fetching visitor stats for range: ${range}`);
 
     const now = new Date();
-    let startDate = new Date(now);
+    const startDate = new Date(now);
 
     let groupFormat;
     if (range === "weekly") {
