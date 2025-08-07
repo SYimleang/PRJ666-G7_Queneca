@@ -31,7 +31,8 @@ interface WaitlistEntry {
 }
 
 interface WaitlistManagerProps {
-  restaurantId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  restaurantId: any;
   restaurantName: string;
   isOpen: boolean;
 }
