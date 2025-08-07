@@ -69,6 +69,7 @@ const PeakHoursHeatmap = () => {
 
     fetchHeatmap();
   }, [user.token]);
+  //
 
   return (
     <div className="mb-10">
