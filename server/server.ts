@@ -15,6 +15,7 @@ import reviewsRouter from "./routes/reviews";
 import waitlistRoutes from "./routes/waitlist";
 import tableRoutes from "./routes/tables";
 import adminTableRoutes from "./routes/adminTables";
+import analyticsRoutes from "./routes/analytics";
 import { connectDB } from "./config/database";
 
 const app = express();
@@ -37,6 +38,7 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/api/waitlist", waitlistRoutes);
 app.use("/api/tables", tableRoutes);
 app.use("/api/admin/tables", adminTableRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // Default Route
 app.get("/", (_req, res) => {

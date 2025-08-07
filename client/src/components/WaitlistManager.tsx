@@ -439,10 +439,17 @@ export default function WaitlistManager({
         )}
 
         {!showJoinForm ? (
+<<<<<<< Updated upstream
           <div className='text-center space-y-4'>
             <p className='text-gray-600'>
               Join the waitlist for {restaurantName} and we'll notify you when
               your table is ready!
+=======
+          <div className="text-center space-y-4">
+            <p className="text-gray-600">
+              Join the waitlist for {restaurantName} and we&apos;ll notify you
+              when your table is ready!
+>>>>>>> Stashed changes
             </p>
             <Button
               onClick={() => setShowJoinForm(true)}
