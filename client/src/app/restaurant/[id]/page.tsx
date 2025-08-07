@@ -14,7 +14,8 @@ import GuessGamePage from "@/app/games/guess-dish/page";
 import SpinGamePage from "@/app/games/spin-wheel/page";
 interface Review {
   _id: string;
-  restaurantId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  restaurantId: any;
   userId: {
     name: string;
     email: string;
@@ -251,6 +252,7 @@ export default function RestaurantInfoPage() {
                 </div>
               )}
 
+              {console.log("Restaurant Data:", restaurant._id)}
               <div className="col-span-1 md:col-span-3 mt-6">
                 <WaitlistManager
                   restaurantId={restaurant._id}
