@@ -134,9 +134,16 @@ export default function AdminNav() {
             <Link href="/admin/table-mgmt">Table Management</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        {/* Reviews */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
             <Link href="/admin/restaurant-reviews">Reviews</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        {/* Analytics */}
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href="/admin/analytics">Analytics</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
