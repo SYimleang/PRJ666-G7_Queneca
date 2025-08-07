@@ -4,7 +4,7 @@
 set -o errexit
 
 # Install deps
-npm ci
+npm install --omit=optional
 
 # Build TypeScript
 npm run build
