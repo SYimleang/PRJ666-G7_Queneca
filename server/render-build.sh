@@ -3,6 +3,8 @@
 # Exit on first error
 set -o errexit
 
+echo ">>> Running render-build.sh"
+
 # Install deps
 npm install --include=dev
 
