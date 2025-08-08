@@ -180,6 +180,77 @@ router.post("/join/:restaurantId", authenticate, (async (
   }
 }) as RequestHandler);
 
+// POST /api/waitlist/admin-add/:restaurantId
+router.post("/admin-add/:restaurantId", authenticate, (async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const { restaurantId } = req.params;
+    const { customerName, customerPhone, partySize, notes } = req.body;
+
+    if (!customerName || !customerPhone || !partySize || partySize < 1) {
+      return res
+        .status(400)
+        .json({ message: "Name, phone, and valid party size are required" });
+    }
+
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    if (!isRestaurantOpen(restaurant)) {
+      return res.status(400).json({
+        message:
+          "Restaurant is currently closed and not accepting waitlist entries",
+      });
+    }
+
+    const currentWaitlistCount = await Waitlist.countDocuments({
+      restaurantId,
+      status: "waiting",
+    });
+
+    if (currentWaitlistCount >= restaurant.waitlistSettings.maxCapacity) {
+      return res.status(400).json({
+        message: "Waitlist is currently full. Please try again later.",
+      });
+    }
+
+    const position = currentWaitlistCount + 1;
+    const estimatedWaitTime = calculateEstimatedWaitTime(position, restaurant);
+
+    const waitlistEntry = await Waitlist.create({
+      restaurantId,
+      customerId: null,
+      customerName,
+      customerPhone,
+      customerEmail: null,
+      partySize,
+      notes,
+      position,
+      estimatedWaitTime,
+    });
+
+    res.status(201).json({
+      message: "Customer successfully added to the waitlist",
+      waitlistEntry: {
+        id: waitlistEntry._id,
+        position: waitlistEntry.position,
+        estimatedWaitTime: waitlistEntry.estimatedWaitTime,
+        partySize: waitlistEntry.partySize,
+        notes: waitlistEntry.notes,
+        joinedAt: waitlistEntry.joinedAt,
+        status: waitlistEntry.status,
+      },
+    });
+  } catch (error) {
+    console.error("Admin add to waitlist error:", error);
+    res.status(500).json({ message: "Server error while adding to waitlist" });
+  }
+}) as RequestHandler);
+
 // GET /api/waitlist/status/:restaurantId - Get customer's waitlist status
 router.get("/status/:restaurantId", authenticate, (async (
   req: AuthRequest,
