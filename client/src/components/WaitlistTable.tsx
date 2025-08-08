@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -8,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/context/UserContext";
 import { useRestaurant } from "@/context/RestaurantContext";
 import TooltipWrapper from "./TooltipWrapper";
-
+import { ManualAddWaitlistPopup } from "@/components/ManualAddWaitlistPopup";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 interface WaitlistEntry {
@@ -74,7 +73,93 @@ export default function WaitlistTable() {
   const [actionLoading, setActionLoading] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // type VisitHistory = VisitEntry[];
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [form, setForm] = useState({
+    customerName: "",
+    customerPhone: "",
+    partySize: 1,
+    notes: "",
+  });
+
+  const manualAddWaitlist = async ({
+    restaurantId,
+    customerName,
+    customerPhone,
+    partySize,
+    notes,
+  }: {
+    restaurantId: string;
+    customerName: string;
+    customerPhone: string;
+    partySize: number;
+    notes?: string;
+  }) => {
+    try {
+      const token = user?.token;
+
+      const response = await fetch(
+        `${apiUrl}/api/waitlist/admin-add/${restaurantId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            customerName,
+            customerPhone,
+            partySize,
+            notes,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to add customer");
+      }
+
+      return data;
+    } catch (error: any) {
+      throw new Error(error.message || "Something went wrong");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const restaurantId = user?.restaurantId?.toString() || "";
+      await manualAddWaitlist({
+        restaurantId,
+        customerName: form.customerName,
+        customerPhone: form.customerPhone,
+        partySize: Number(form.partySize),
+        notes: form.notes,
+      });
+
+      alert("Customer added successfully!");
+      setIsOpen(false);
+      setForm({
+        customerName: "",
+        customerPhone: "",
+        partySize: 1,
+        notes: "",
+      });
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+  type VisitHistory = VisitEntry[];
 
   // Fetch waitlist data
   const fetchWaitlist = async () => {
@@ -161,7 +246,6 @@ export default function WaitlistTable() {
     }
   };
 
-  // Mark customer as seated
   const seatCustomer = async (entryId: string) => {
     if (!user) return;
 
@@ -347,6 +431,82 @@ export default function WaitlistTable() {
             >
               {loading ? "Refreshing..." : "Refresh"}
             </Button>
+            <>
+              <button
+                onClick={() => setIsOpen(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded shadow"
+              >
+                + Add Customer Manually
+              </button>
+
+              {isOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="bg-white p-6 rounded shadow w-[300px] space-y-3"
+                  >
+                    <h2 className="text-lg font-bold">
+                      Add Customer to Waitlist
+                    </h2>
+
+                    <input
+                      type="text"
+                      name="customerName"
+                      placeholder="Customer Name"
+                      value={form.customerName}
+                      onChange={handleChange}
+                      required
+                      className="w-full border p-2"
+                    />
+
+                    <input
+                      type="tel"
+                      name="customerPhone"
+                      placeholder="Phone Number"
+                      value={form.customerPhone}
+                      onChange={handleChange}
+                      required
+                      className="w-full border p-2"
+                    />
+
+                    <input
+                      type="number"
+                      name="partySize"
+                      min={1}
+                      value={form.partySize}
+                      onChange={handleChange}
+                      required
+                      className="w-full border p-2"
+                    />
+
+                    <textarea
+                      name="notes"
+                      placeholder="Notes (optional)"
+                      value={form.notes}
+                      onChange={handleChange}
+                      className="w-full border p-2"
+                    />
+
+                    <div className="flex justify-between mt-4">
+                      <button
+                        type="submit"
+                        className="bg-green-500 text-white px-4 py-2 rounded"
+                      >
+                        Add
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsOpen(false)}
+                        className="text-gray-500 hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </>
+
             {settings && (
               <div className="text-sm text-gray-600">
                 {waitlist.length} / {settings.maxCapacity} capacity
