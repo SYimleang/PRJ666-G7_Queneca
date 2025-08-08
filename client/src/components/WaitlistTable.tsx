@@ -126,6 +126,7 @@ export default function WaitlistTable() {
     }
   };
 
+  // Handle submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -158,7 +159,6 @@ export default function WaitlistTable() {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
-  //type VisitHistory = VisitEntry[];
 
   // Fetch waitlist data
   const fetchWaitlist = async () => {
@@ -349,6 +349,7 @@ export default function WaitlistTable() {
     }
   };
 
+  // Format wait time in a user-friendly way
   const formatWaitTime = (minutes: number): string => {
     if (minutes < 60) return `${minutes}m`;
     const hours = Math.floor(minutes / 60);
@@ -356,6 +357,7 @@ export default function WaitlistTable() {
     return `${hours}h ${remainingMinutes}m`;
   };
 
+  // Format time for display
   const formatTime = (dateString: string): string => {
     return new Date(dateString).toLocaleTimeString([], {
       hour: "2-digit",
@@ -363,6 +365,7 @@ export default function WaitlistTable() {
     });
   };
 
+  // Phone formatting function
   const formatPhone = (phone: string): string => {
     if (phone.length === 10) {
       return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6)}`;
@@ -370,6 +373,7 @@ export default function WaitlistTable() {
     return phone;
   };
 
+  // Status color and text helpers
   const getStatusColor = (status: string): string => {
     switch (status) {
       case "waiting":
@@ -387,6 +391,7 @@ export default function WaitlistTable() {
     }
   };
 
+  // Get status text for display
   const getStatusText = (status: string): string => {
     switch (status) {
       case "waiting":
