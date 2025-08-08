@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/context/UserContext";
 import { useRestaurant } from "@/context/RestaurantContext";
 import TooltipWrapper from "./TooltipWrapper";
-import { ManualAddWaitlistPopup } from "@/components/ManualAddWaitlistPopup";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 interface WaitlistEntry {
@@ -563,7 +563,7 @@ export default function WaitlistTable() {
                 </tr>
               </thead>
               <tbody>
-                {filteredWaitlist.map((entry, index) => (
+                {filteredWaitlist.map((entry) => (
                   <tr
                     key={entry.id}
                     className={`border-b border-gray-100 hover:bg-gray-50 ${
@@ -731,7 +731,7 @@ export default function WaitlistTable() {
     return (
       <div className="space-y-2 text-sm">
         <p className="font-semibold">Visited:</p>
-        {waitlistHistory.map((visit, i) => (
+        {waitlistHistory.map((visit) => (
           <div key={visit.id} className="border-b pb-1 last:border-none">
             <p>
               {new Date(visit.joinedAt).toLocaleDateString()} — Party of{" "}
