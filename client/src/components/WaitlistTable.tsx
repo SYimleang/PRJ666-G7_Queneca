@@ -73,7 +73,6 @@ export default function WaitlistTable() {
   const [actionLoading, setActionLoading] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({
     customerName: "",
@@ -159,7 +158,7 @@ export default function WaitlistTable() {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
-  type VisitHistory = VisitEntry[];
+  //type VisitHistory = VisitEntry[];
 
   // Fetch waitlist data
   const fetchWaitlist = async () => {
