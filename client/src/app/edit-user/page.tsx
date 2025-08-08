@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { z } from "zod";
+
 export default function EditUserPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
   const { user, setUser, loading } = useUser();
@@ -15,6 +17,8 @@ export default function EditUserPage() {
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [curPassword, setCurPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const getDashboardLink = () => {
     console.log(user?.role);
@@ -30,6 +34,28 @@ export default function EditUserPage() {
         return "/";
     }
   };
+
+  // Password validation schema
+  const passwordSchema = z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain at least one special character"
+    );
+
+  // Reusable password
+  const passwordChecks = [
+    { test: /.{8,}/, label: "At least 8 characters" },
+    { test: /[A-Z]/, label: "One uppercase letter" },
+    { test: /[a-z]/, label: "One lowercase letter" },
+    { test: /[0-9]/, label: "One number" },
+    { test: /[^A-Za-z0-9]/, label: "One special character" },
+  ];
+
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth");
@@ -48,6 +74,21 @@ export default function EditUserPage() {
 
   const handleSave = async () => {
     try {
+      // Validate new password
+      if (newPassword !== confirmPassword) {
+        return alert("New passwords do not match!");
+      }
+
+      if (newPassword) {
+        try {
+          passwordSchema.parse(newPassword);
+        } catch (err) {
+          if (err instanceof z.ZodError) {
+            return alert(err.errors[0].message); // Show first validation error
+          }
+        }
+      }
+
       const response = await fetch(`${apiUrl}/api/users/me`, {
         method: "PUT",
         headers: {
@@ -59,6 +100,7 @@ export default function EditUserPage() {
           email,
           name,
           phone,
+          newPassword: newPassword || undefined, // only send if not empty
         }),
       });
 
@@ -82,7 +124,7 @@ export default function EditUserPage() {
           </h1>
 
           <label className="block mb-2 text-sm font-medium text-red-500">
-            Full Name
+            Full Name*
           </label>
           <Input
             type="text"
@@ -91,7 +133,7 @@ export default function EditUserPage() {
             onChange={(e) => setName(e.target.value)}
           />
           <label className="block mb-2 text-sm font-medium text-red-500">
-            Email
+            Email*
           </label>
           <Input
             type="email"
@@ -100,7 +142,7 @@ export default function EditUserPage() {
             onChange={(e) => setEmail(e.target.value)}
           />
           <label className="block mb-2 text-sm font-medium text-red-500">
-            Phone
+            Phone*
           </label>
           <Input
             type="text"
@@ -108,8 +150,46 @@ export default function EditUserPage() {
             className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
             onChange={(e) => setPhone(e.target.value)}
           />
+
           <label className="block mb-2 text-sm font-medium text-red-500">
-            Current Password
+            New Password
+          </label>
+          <Input
+            type="password"
+            placeholder="Optional: Enter new password"
+            value={newPassword}
+            className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          {newPassword.length > 0 && (
+            <ul className="text-sm mt-2">
+              {passwordChecks.map((check, i) => {
+                const passed = check.test.test(newPassword);
+                return (
+                  <li
+                    key={i}
+                    className={passed ? "text-green-600" : "text-gray-400"}
+                  >
+                    {passed ? "✅" : "❌"} {check.label}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          <label className="block mb-2 text-sm font-medium text-red-500">
+            Confirm New Password
+          </label>
+          <Input
+            type="password"
+            placeholder="Optional: Confirm new password"
+            value={confirmPassword}
+            className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
+          <label className="block mb-2 text-sm font-medium text-red-500">
+            Current Password*
           </label>
           <Input
             type="password"
@@ -117,6 +197,7 @@ export default function EditUserPage() {
             className="mb-4 border-red-200 focus:border-red-400 bg-amber-50"
             onChange={(e) => setCurPassword(e.target.value)}
           />
+
           <div className="flex justify-between gap-2">
             <Button
               onClick={handleSave}

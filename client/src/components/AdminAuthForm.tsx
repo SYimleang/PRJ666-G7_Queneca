@@ -78,10 +78,12 @@ export default function AdminAuthForm() {
   const onSubmit = async (data: FormValues) => {
     const endpoint = isSignup ? "register" : "login";
 
-    let dataToSend = { ...data, role: "admin" as const };
-
+    let dataToSend;
     // Custom validation for signup
     if (isSignup) {
+      const role = "admin";
+      dataToSend = { ...data, role };
+
       if (!data.name || data.name.trim().length < 2) {
         alert("Name must be at least 2 characters");
         return;
@@ -107,9 +109,10 @@ export default function AdminAuthForm() {
       const { confirmPassword, ...rest } = dataToSend;
       dataToSend = rest;
     } else {
+      dataToSend = { ...data };
       // For login, we don't need to send role
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { role, ...loginData } = dataToSend;
+      const { ...loginData } = dataToSend;
       dataToSend = loginData;
     }
 
@@ -173,15 +176,15 @@ export default function AdminAuthForm() {
   };
 
   return (
-    <div className='w-full max-w-md mt-15 p-6 rounded-xl bg-white shadow-lg border border-red-100'>
-      <div className='flex justify-center mb-4'>
-        <Image src='/logo.png' alt='Logo' width={250} height={100} />
+    <div className="w-full max-w-md mt-15 p-6 rounded-xl bg-white shadow-lg border border-red-100">
+      <div className="flex justify-center mb-4">
+        <Image src="/logo.png" alt="Logo" width={250} height={100} />
       </div>
-      <div className='text-center mb-6'>
-        <h2 className='text-red-600 text-2xl font-bold mb-2'>
+      <div className="text-center mb-6">
+        <h2 className="text-red-600 text-2xl font-bold mb-2">
           Admin {isSignup ? "Sign Up" : "Sign In"}
         </h2>
-        <p className='text-gray-600 text-sm'>
+        <p className="text-gray-600 text-sm">
           {isSignup
             ? "Create your administrator account"
             : "Access the admin dashboard"}
@@ -189,20 +192,20 @@ export default function AdminAuthForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* Name */}
           {isSignup && (
             <FormField
               control={form.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-red-500'>Full Name</FormLabel>
+                  <FormLabel className="text-red-500">Full Name</FormLabel>
                   <FormControl>
                     <Input
-                      className='bg-amber-50 border-red-200 focus:border-red-400'
-                      type='text'
-                      placeholder='Enter your full name'
+                      className="bg-amber-50 border-red-200 focus:border-red-400"
+                      type="text"
+                      placeholder="Enter your full name"
                       {...field}
                     />
                   </FormControl>
@@ -215,15 +218,15 @@ export default function AdminAuthForm() {
           {/* Email */}
           <FormField
             control={form.control}
-            name='email'
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-red-500'>Email</FormLabel>
+                <FormLabel className="text-red-500">Email</FormLabel>
                 <FormControl>
                   <Input
-                    className='bg-amber-50 border-red-200 focus:border-red-400'
-                    type='email'
-                    placeholder='admin@example.com'
+                    className="bg-amber-50 border-red-200 focus:border-red-400"
+                    type="email"
+                    placeholder="admin@example.com"
                     {...field}
                   />
                 </FormControl>
@@ -236,15 +239,15 @@ export default function AdminAuthForm() {
           {isSignup && (
             <FormField
               control={form.control}
-              name='phone'
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-red-500'>Phone Number</FormLabel>
+                  <FormLabel className="text-red-500">Phone Number</FormLabel>
                   <FormControl>
                     <Input
-                      className='bg-amber-50 border-red-200 focus:border-red-400'
-                      type='text'
-                      placeholder='333-333-3333'
+                      className="bg-amber-50 border-red-200 focus:border-red-400"
+                      type="text"
+                      placeholder="333-333-3333"
                       {...field}
                     />
                   </FormControl>
@@ -257,15 +260,15 @@ export default function AdminAuthForm() {
           {/* Password */}
           <FormField
             control={form.control}
-            name='password'
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-red-500'>Password</FormLabel>
+                <FormLabel className="text-red-500">Password</FormLabel>
                 <FormControl>
                   <Input
-                    className='bg-amber-50 border-red-200 focus:border-red-400'
-                    type='password'
-                    placeholder='&#9679;&#9679;&#9679;&#9679;&#9679;'
+                    className="bg-amber-50 border-red-200 focus:border-red-400"
+                    type="password"
+                    placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;"
                     {...field}
                   />
                 </FormControl>
@@ -278,17 +281,17 @@ export default function AdminAuthForm() {
           {isSignup && (
             <FormField
               control={form.control}
-              name='confirmPassword'
+              name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-red-500'>
+                  <FormLabel className="text-red-500">
                     Confirm Password
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className='bg-amber-50 border-red-200 focus:border-red-400'
-                      type='password'
-                      placeholder='Confirm your password'
+                      className="bg-amber-50 border-red-200 focus:border-red-400"
+                      type="password"
+                      placeholder="Confirm your password"
                       {...field}
                     />
                   </FormControl>
@@ -300,20 +303,20 @@ export default function AdminAuthForm() {
 
           {/* Submit Button */}
           <Button
-            type='submit'
-            className='w-full bg-red-600 hover:bg-red-500 text-white py-3 font-semibold'
+            type="submit"
+            className="w-full bg-red-600 hover:bg-red-500 text-white py-3 font-semibold"
           >
             {isSignup ? "Create Admin Account" : "Sign In to Admin"}
           </Button>
         </form>
       </Form>
 
-      <div className='text-sm mt-6 text-center'>
+      <div className="text-sm mt-6 text-center">
         {isSignup ? (
           <>
             Already have an admin account?{" "}
             <button
-              className='text-red-600 hover:underline font-medium'
+              className="text-red-600 hover:underline font-medium"
               onClick={() => {
                 setIsSignup(false);
                 router.push("/admin/auth?mode=login");
@@ -326,7 +329,7 @@ export default function AdminAuthForm() {
           <>
             Need to create an admin account?{" "}
             <button
-              className='text-red-600 hover:underline font-medium'
+              className="text-red-600 hover:underline font-medium"
               onClick={() => {
                 setIsSignup(true);
                 router.push("/admin/auth?mode=signup");
@@ -338,10 +341,10 @@ export default function AdminAuthForm() {
         )}
       </div>
 
-      <div className='text-center mt-4'>
+      <div className="text-center mt-4">
         <Button
-          variant='ghost'
-          className='text-gray-500 hover:text-gray-700'
+          variant="ghost"
+          className="text-gray-500 hover:text-gray-700"
           onClick={() => router.push("/auth")}
         >
           ← Back to General Login

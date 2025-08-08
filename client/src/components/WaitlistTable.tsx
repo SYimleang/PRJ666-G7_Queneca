@@ -37,12 +37,30 @@ interface WaitlistSettings {
 }
 
 type VisitEntry = {
-  date: string;
-  partySize: number;
-  notes?: string;
-  stars?: number;
-  message?: string;
+  waitlistHistory: {
+    id: string;
+    restaurantId: string;
+    partySize: number;
+    joinedAt: string;
+    status: string;
+    seatedAt?: string;
+    noShowAt?: string;
+    cancelledAt?: string;
+    notes?: string;
+  }[];
+  reviews?: {
+    id: string;
+    restaurantId: string;
+    rating: number;
+    comment?: string;
+  }[];
 };
+// date: string;
+// partySize: number;
+// notes?: string;
+// stars?: number;
+// message?: string;
+//};
 
 export default function WaitlistTable() {
   const { user } = useUser();
@@ -54,6 +72,7 @@ export default function WaitlistTable() {
   const [error, setError] = useState<string>("");
   const [actionLoading, setActionLoading] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
+
 
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState({
@@ -703,10 +722,10 @@ export default function WaitlistTable() {
     </Card>
   );
 
-  function renderHistory(history: VisitHistory) {
-    const { waitlistHistory, reviews } = history;
+  function renderHistory(history: VisitEntry) {
+    const { waitlistHistory, reviews = [] } = history;
 
-    if (!history || history.length === 0) {
+    if (!history || waitlistHistory.length === 0) {
       return <p className="text-sm text-gray-500">No visit history found.</p>;
     }
 

@@ -49,7 +49,7 @@ export default function TooltipWrapper({
   apiToken,
   renderContent,
 }: Props) {
-  const [history, setHistory] = useState<Visit[] | null>(null);
+  const [history, setHistory] = useState<CustomerHistory | null>(null);
   const [loading, setLoading] = useState(false);
 
   const fetchHistory = async () => {

@@ -38,7 +38,7 @@ const VisitorsChart = ({
           `${apiUrl}/api/analytics/visitors?range=${range}`,
           {
             headers: {
-              Authorization: `Bearer ${user.token}`,
+              Authorization: user?.token ? `Bearer ${user.token}` : "",
             },
           }
         );

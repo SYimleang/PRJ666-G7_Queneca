@@ -21,6 +21,11 @@ const PeakHoursHeatmap = () => {
 
   useEffect(() => {
     const fetchHeatmap = async () => {
+      if (!user) {
+        setError("User not authenticated");
+        setShowLoading(false);
+        return;
+      }
       try {
         setShowLoading(true);
 
@@ -68,7 +73,8 @@ const PeakHoursHeatmap = () => {
     };
 
     fetchHeatmap();
-  }, [user.token]);
+  }, [user?.token]);
+  //
 
   return (
     <div className="mb-10">
