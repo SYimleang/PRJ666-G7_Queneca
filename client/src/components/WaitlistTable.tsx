@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/context/UserContext";
 import { useRestaurant } from "@/context/RestaurantContext";
 import TooltipWrapper from "./TooltipWrapper";
-import { ManualAddWaitlistPopup } from "@/components/ManualAddWaitlistPopup";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 interface WaitlistEntry {
