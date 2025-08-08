@@ -38,13 +38,13 @@ const waitlistSchema = new Schema<IWaitlist>(
     customerId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
     customerName: { type: String, required: true, trim: true },
     customerPhone: { type: String, required: true, trim: true },
     customerEmail: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
       lowercase: true,
     },
@@ -52,7 +52,14 @@ const waitlistSchema = new Schema<IWaitlist>(
     notes: { type: String, trim: true },
     status: {
       type: String,
-      enum: ["waiting", "called", "seated", "cancelled", "no-show"],
+      enum: [
+        "waiting",
+        "called",
+        "seated",
+        "cancelled",
+        "no-show",
+        "completed",
+      ],
       default: "waiting",
     },
     position: { type: Number, required: true },
@@ -62,8 +69,8 @@ const waitlistSchema = new Schema<IWaitlist>(
     seatedAt: { type: Date },
     cancelledAt: { type: Date },
     noShowAt: { type: Date },
-    cancellationReason: { type: String },
     completedAt: { type: Date },
+    cancellationReason: { type: String },
   },
   { timestamps: true }
 );
