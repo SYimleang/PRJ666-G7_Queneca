@@ -25,7 +25,7 @@ This project is built using Next.js for the frontend, Express.js for the backend
 
 Key stakeholders include:
 
-- Customers: Can join the waitlist without physically being at the restaurant.
+- Customers: Can join the waitlist without physically being at the restaurant through the website or QR code.
 - Restaurant Staff: Can manage waitlist entries, update seating, and reduce manual tracking errors.
 - Restaurant Owners (Admin): Manage restaurant/waitlist/staff configurations, insights into peak hours, average wait times, and seating efficiency.
 - The solution aims to reduce overcrowding in restaurant lobbies, improve customer satisfaction, and optimize operational workflows for dining establishments.
