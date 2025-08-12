@@ -19,6 +19,16 @@
 
 ## Overview
 
+The Restaurant Waitlist Application is a web-friendly system designed to streamline the process of managing customer waitlists for restaurants. The application allows customers to join a waitlist remotely, view their real-time position in the queue, and receive notifications when their table is ready. Restaurant staff can efficiently manage incoming parties, track seating availability, and update waitlist statuses from an intuitive dashboard. Restaurant admin can set the restaurant configurations, manage tables, set waitlist configurations, manage staff, manage reviews, and analyze restaurant statistics.
+
+This project is built using Next.js for the frontend, Express.js for the backend, and MongoDB as the initial database solution (with potential migration to a relational database for production). The system is designed with scalability, real-time updates, and a responsive user experience in mind.
+
+Key stakeholders include:
+
+- Customers: Can join the waitlist without physically being at the restaurant.
+- Restaurant Staff: Can manage waitlist entries, update seating, and reduce manual tracking errors.
+- Restaurant Owners (Admin): Manage restaurant/waitlist/staff configurations, insights into peak hours, average wait times, and seating efficiency.
+- The solution aims to reduce overcrowding in restaurant lobbies, improve customer satisfaction, and optimize operational workflows for dining establishments.
 
 
 ## Background
@@ -34,7 +44,7 @@ Click to view the [Weekly Deliverable Schedule](https://seneca.sharepoint.com/:x
 
 ### UI/UXD - Mock-ups
 
-- [Figma]()
+- [Figma](https://www.figma.com/design/xt7FrpShSbqRJ5knIQvCcL/QUENECA---UI?node-id=0-1&m=dev&t=IdseNZhYpb7lplT2-1)
 
 ### Development Tools and Frameworks
 
