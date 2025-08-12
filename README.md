@@ -6,7 +6,6 @@
 - [Overview](#overview)
 - [Background](#background)
 - [Weekly Deliverable Schedule](#weekly-deliverable-schedule)
-- [Network Diagram](#network-diagram)
 - [Tools](#tools)
   - [UI/UXD - Mock-ups](#uiuxd---mock-ups)
   - [Development Tools and Frameworks](#development-tools-and-frameworks)
@@ -30,10 +29,6 @@ Additionally, the lack of engaging options during waiting periods further detrac
 ## Weekly Deliverable Schedule
 
 Click to view the [Weekly Deliverable Schedule](https://seneca.sharepoint.com/:x:/r/sites/2025-05-05PRJ666NBB/Class%20Materials/PRJ666%20NBB%20Summer%202025%20Deliverables%20Schedule.xlsx?d=w5f24f09ee36b450ab8d2ab21a52c1d78&csf=1&web=1&e=oEtveN) on the Teams SharePoint.
-
-## Network Diagram
-
-Click to view the project's [Network Diagram]()
 
 ## Tools
 
