@@ -7,30 +7,13 @@ export default function Footer() {
 
   return (
     <footer className="bg-red-800 text-white py-6">
-      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand */}
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Queneca</h2>
           <p className="text-sm">
             Making restaurant waitlists smarter and faster.
           </p>
-        </div>
-
-        {/* About Us */}
-        <div>
-          <h3 className="font-semibold mb-2">About Us</h3>
-          <ul className="space-y-1 text-sm">
-            <li>
-              <Link href="/our-story" className="hover:text-red-500">
-                Our Story
-              </Link>
-            </li>
-            <li>
-              <Link href="/reviews" className="hover:text-red-500">
-                Reviews
-              </Link>
-            </li>
-          </ul>
         </div>
 
         {/* Support */}
