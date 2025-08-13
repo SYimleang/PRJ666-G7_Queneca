@@ -58,6 +58,16 @@ Click to view the [Weekly Deliverable Schedule](https://seneca.sharepoint.com/:x
 
 ### GitHub Development Process
 
+1. `git checkout main` (move to main branch)
+2. `git pull origin`(pull the main code)
+3. `git checkout dev` (create and/or move to dev branch)
+4. Write new code, add features, etc.
+5. `git branch` (make sure you are on the right branch, which is the dev branch)
+6. `git add file1 file2`
+7. `git commit -m "Comment"`
+8. `git push origin`
+9. Merging Process: 
+    Go to github repo &rarr; pull requests &rarr; new pull request &rarr; base:main, compare: `dev` &rarr; create pull request &rarr; add comments if necessary &rarr; wait for comments, changes, or approval &rarr; merge
 
 ### IDEs, Documentation, and Hosting Services
 
